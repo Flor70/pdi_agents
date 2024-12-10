@@ -1,0 +1,116 @@
+generate_metrics_summary:
+  description: >
+    1. Receber um arquivo CSV contendo todas as jogadas realizadas por um jogador em torneios de poker online.
+    2. Processar os dados para extrair métricas essenciais de desempenho, incluindo, mas não limitado a:  
+        - VPIP (Voluntariamente Colocado no Pote).  
+        - PFR (Pré-flop Raise).  
+        - ROI (Retorno sobre o Investimento).  
+        - Taxa de vitórias (Win Rate).  
+        - Frequência de blefes bem-sucedidos.  
+    3. Analisar padrões de jogo, como desempenho em diferentes posições na mesa, níveis de blinds e tipos de torneio.  
+    4. Gerar um relatório detalhado e estruturado com todas as métricas, estatísticas e observações relevantes.  
+    5. **Basear-se na organização da planilha recebida:**  
+        - **Identificação Geral:**  
+          - Colunas como **Site**, **Game**, e **Hand #** fornecem informações básicas sobre o ambiente e a partida.  
+        - **Contexto do Jogo:**  
+          - **Date** e **Blinds** indicam a data e os valores das apostas no momento.  
+        - **Chip Stack e Resultados:**  
+          - Métricas como **Chips (BBs)**, **Chips Won**, e **All-In Adj BB** ajudam a calcular a lucratividade e o impacto das jogadas.  
+        - **Cartas e Ações:**  
+          - **Hole Cards**, **Position**, e ações específicas como **PF Act**, **F Act**, **T Act**, e **R Act** mostram decisões estratégicas em cada fase da jogada.  
+        - **Resultados e Vencedores:**  
+          - **Winner**, **Winning Hand**, e **Pot** fornecem dados sobre os resultados finais das mãos jogadas.  
+        - **Colunas Redundantes:**  
+          - **Marked** e **Pot (BB).1** podem ser ignoradas durante a análise, pois não fornecem informações adicionais úteis.
+
+  expected_output: >
+    Um relatório extenso focado nos números do jogador. Este relatório detalhado deverá ser todo fundamentado nos números extraídos do csv.
+    Você não deve descansar enquanto não conseguir extrair todas as informações do csv. Você NUNCA deve inventar um valor e sempre se basear no csv.
+    O relatório deve conter, mas não se limitar, aos seguintes pontos:  
+    - As métricas de desempenho calculadas com a memória de cálculo.  
+    - Os números do jogador agregados
+    - Todos os dados relevantes extraídos por você do csv com dados do jogador
+    - todas as informações relevantes do csv extraídas
+
+
+
+create_performance_report:
+  description: >
+   1. Receber e interpretar o relatório analítico gerado pelo Analista Estratégico de Métricas de Poker.
+   2. Utilizar a base de conhecimento fundamentada no livro de poker em formato PDF para enriquecer as análises com teorias, estratégias e melhores práticas reconhecidas no jogo.
+   3. Processar as métricas e informações do jogador para identificar:
+      - Padrões de comportamento que devem ser ajustados.
+      - Áreas de excelência que devem ser mantidas e exploradas.
+      - Oportunidades de melhoria baseadas em decisões estratégicas.
+   4. Criar um relatório detalhado e personalizado que aborde:
+      - **O que melhorar:** Identificação de falhas e sugestões práticas de correção.
+      - **O que fazer mais:** Comportamentos ou estratégias que já mostram sucesso e podem ser potencializados.
+      - **O que fazer menos ou deixar de fazer:** Erros recorrentes ou abordagens ineficazes.
+      - **O que começar a fazer:** Estratégias ou práticas sugeridas com base em dados e fundamentos teóricos do livro de poker.
+   5. Garantir que todas as sugestões sejam 100% personalizadas, conectando as métricas do jogador às recomendações teóricas para criar uma análise prática e de fácil compreensão.
+
+  expected_output: >
+   Um relatório detalhado e estruturado que inclua:
+   - **Seções principais de análise:**  
+     - Identificação de pontos fortes e fracos.  
+     - Sugestões personalizadas para melhoria.  
+     - Referências claras às métricas analisadas e ao embasamento teórico do livro de poker.  
+   - **Propostas práticas e acionáveis:**  
+     - Sugestões para ações imediatas que melhorem a performance.  
+     - Estratégias teóricas adaptadas ao estilo e dados do jogador.  
+   - **Clareza e personalização:**  
+     - Relatório claro, objetivo e com orientações diretamente aplicáveis à rotina do jogador.  
+   - **Tabelas e gráficos opcionais:** Para ilustrar tendências e facilitar a compreensão dos dados apresentados.
+    O relatório deverá ser um guia prático e estratégico para que o jogador entenda claramente o que precisa fazer para se transformar em um jogador de poker mais eficiente, inteligente e lucrativo.
+
+prepare_educational_content:
+
+  description: >
+    1. Receber o relatório detalhado criado pelo Especialista em Estratégia e Performance de Poker, que já contém análises completas sobre a performance do jogador, incluindo áreas de melhoria, forças e oportunidades.  
+    2. Consultar um renomado livro de poker (disponível em formato PDF na base de conhecimento) para fundamentar o plano de estudo com as melhores práticas, estratégias e conteúdos teóricos.  
+    3. Criar um plano de estudo totalmente personalizado, com:  
+        - **Conteúdos prioritários:** O que o jogador deve aprender para corrigir falhas (ex.: leitura de ranges, estratégia de blinds, ou quando NÃO fazer aquele blefe heroico).  
+        - **Reforço de acertos:** Áreas em que o jogador já é bom, mas pode se tornar excelente (ou seja, consolidar aquela habilidade que faz ele parecer um profissional nas mesas).  
+        - **Novos horizontes:** Conteúdos que o jogador talvez nem saiba que precisa, mas que vão transformá-lo na versão "next-level" de si mesmo.  
+    4. Garantir que o plano seja claro, progressivo e estruturado com toques de humor para manter o jogador motivado durante o aprendizado. Afinal, poker é coisa séria, mas aprender não precisa ser tão tenso quanto estar "all-in" com um par baixo.  
+
+  expected_output: >
+    Um documento de plano de estudo que:  
+    - Contenha uma lista personalizada e organizada de tópicos teóricos e práticos que o jogador deve estudar.  
+    - Inclua referências diretas ao livro de poker consultado, conectando o aprendizado teórico à prática diária do jogador.  
+    - Ofereça sugestões de exercícios ou simulações que ajudem o jogador a internalizar os conceitos.  
+    - Apresente as recomendações com um toque de leveza e bom humor, mantendo o jogador engajado e confiante de que está no caminho para dominar as mesas.  
+    - Seja um guia prático e motivador, que faça o jogador sentir que aprender poker é tão divertido quanto ganhar um pote gigante (sem ter que mostrar as cartas!).  
+    Ao final, o jogador terá um plano que é como um "GPS do poker" – com ele, chegar ao destino de ser um jogador lucrativo e imbatível será só questão de tempo (e algumas boas leituras entre as sessões).
+
+generate_final_summary:
+
+  description: >
+    1. Receber os relatórios e análises criados pelos agentes anteriores:  
+        - **Analista Estratégico de Métricas de Poker**  
+        - **Especialista em Estratégia e Performance de Poker**  
+        - **Professor de Poker**  
+    2. Revisar todo o conteúdo fornecido para identificar as informações mais importantes e relevantes.  
+    3. Condensar as análises e recomendações em um sumário executivo claro, objetivo e impactante.  
+    4. Garantir que o documento apresente de forma sucinta:  
+        - A visão geral da performance do jogador.  
+        - Os pontos fortes e fracos destacados pelos especialistas.  
+        - As recomendações principais para melhoria e os próximos passos sugeridos.  
+    5. Não realizar novas análises ou interpretações – a tarefa é reproduzir de forma sintética as informações fornecidas pelos agentes, priorizando clareza e organização.
+  
+  expected_output: > 
+
+    Um **sumário executivo** da performance do jogador, contendo:  
+    - **Seção 1: Panorama Geral**  
+      - Breve descrição do desempenho atual do jogador, destacando suas métricas mais relevantes.  
+    - **Seção 2: Pontos Fortes e Fracos**  
+      - Lista objetiva das principais forças e fraquezas identificadas nos relatórios.  
+    - **Seção 3: Recomendações e Próximos Passos**  
+      - Resumo das ações sugeridas para que o jogador evolua, incluindo:  
+        - O que melhorar.  
+        - O que reforçar.  
+        - O que começar ou deixar de fazer.  
+    - **Seção 4: Conclusão Motivacional**  
+      - Um parágrafo final que inspire o jogador a colocar as recomendações em prática, destacando o potencial de crescimento e evolução no jogo.  
+
+    O sumário deve ser direto ao ponto, com linguagem acessível e motivadora, funcionando como um guia prático que o jogador pode consultar rapidamente para lembrar suas metas e próximas ações. Em suma, é a versão "cafeína concentrada" de todo o trabalho dos especialistas anteriores.
