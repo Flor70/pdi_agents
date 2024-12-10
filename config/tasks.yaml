@@ -1,15 +1,8 @@
 generate_metrics_summary:
   description: >
     1. Receber um arquivo CSV contendo todas as jogadas realizadas por um jogador em torneios de poker online.
-    2. Processar os dados para extrair métricas essenciais de desempenho, incluindo, mas não limitado a:  
-        - VPIP (Voluntariamente Colocado no Pote).  
-        - PFR (Pré-flop Raise).  
-        - ROI (Retorno sobre o Investimento).  
-        - Taxa de vitórias (Win Rate).  
-        - Frequência de blefes bem-sucedidos.  
-    3. Analisar padrões de jogo, como desempenho em diferentes posições na mesa, níveis de blinds e tipos de torneio.  
-    4. Gerar um relatório detalhado e estruturado com todas as métricas, estatísticas e observações relevantes.  
-    5. **Basear-se na organização da planilha recebida:**  
+  
+    2. **Basear-se na organização da planilha recebida:**  
         - **Identificação Geral:**  
           - Colunas como **Site**, **Game**, e **Hand #** fornecem informações básicas sobre o ambiente e a partida.  
         - **Contexto do Jogo:**  
@@ -22,9 +15,14 @@ generate_metrics_summary:
           - **Winner**, **Winning Hand**, e **Pot** fornecem dados sobre os resultados finais das mãos jogadas.  
         - **Colunas Redundantes:**  
           - **Marked** e **Pot (BB).1** podem ser ignoradas durante a análise, pois não fornecem informações adicionais úteis.
-
+    3. Processar os dados para extrair métricas essenciais de desempenho, incluindo, mas não limitado a:  
+        - VPIP (Voluntariamente Colocado no Pote).  
+        - PFR (Pré-flop Raise).  
+        - ROI (Retorno sobre o Investimento).  
+        - Taxa de vitórias (Win Rate).  
+        - Frequência de blefes bem-sucedidos.
   expected_output: >
-    Um relatório extenso focado nos números do jogador. Este relatório detalhado deverá ser todo fundamentado nos números extraídos do csv.
+    Um relatório com os números do jogador. Este relatório detalhado deverá ser todo fundamentado nos números extraídos do csv, com exemplos.
     Você não deve descansar enquanto não conseguir extrair todas as informações do csv. Você NUNCA deve inventar um valor e sempre se basear no csv.
     O relatório deve conter, mas não se limitar, aos seguintes pontos:  
     - As métricas de desempenho calculadas com a memória de cálculo.  

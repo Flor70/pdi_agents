@@ -10,17 +10,21 @@ load_env()
 
 import os
 import yaml
-from crewai import Agent, Task, Crew, Process
+from crewai import Agent, Task, Crew, Process, LLM
 from crewai_tools import (
     PDFSearchTool,
     CSVSearchTool
 )
+
 
 pdf_tool = PDFSearchTool('data/Kill Everyone_ Advanced Strategies for No-Limit Hold Em Poker Tournaments and Sit-n-Gos - PDF Room.pdf')
 csv_tool = CSVSearchTool('data/Gui Report total.csv')
 
 # Set OpenAI Model
 os.environ['OPENAI_MODEL_NAME'] = 'gpt-4o'
+claude_llm = LLM(model="claude-3-5-sonnet-20240620", 
+                 api_key=os.environ["ANTHROPIC_API_KEY"] )
+
 
 
 def load_configs():
@@ -45,8 +49,8 @@ def create_crew(agents_config, tasks_config):
         verbose=True,
         cache=True,
         tools=[
-            csv_tool
-        ]
+            csv_tool,],
+        LLM=claude_llm
     )
 
     report_creator_agent = Agent(
@@ -54,7 +58,9 @@ def create_crew(agents_config, tasks_config):
         verbose=True,
         tools=[
             pdf_tool
-        ]
+        ],
+        cache=True,
+        llm=claude_llm
     )
 
     educator_agent = Agent(
@@ -62,12 +68,16 @@ def create_crew(agents_config, tasks_config):
         verbose=True,
         tools=[
             pdf_tool
-        ]
+        ],
+        cache=True,
+        llm=claude_llm
     )
 
     final_writer_agent = Agent(
         config=agents_config['final_writer'],
-        verbose=True
+        verbose=True,
+        llm=claude_llm,
+        cache=True
     )
 
 
