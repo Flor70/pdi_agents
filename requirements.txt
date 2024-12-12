@@ -2,14 +2,26 @@
 # note which revision of python, for example 3.9.6
 # in this file, insert all the pip install needs, include revision
 
-#for example:
-#torch==2.0.1
-#matplotlib==3.7.2
+# Core dependencies
+crewai>=0.11.0
+langchain>=0.1.0
+pydantic>=2.0.0
+crewai_tools==0.12.1
 
-pinecone-client[grpc]==5.1.0
+# Data processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Vector store and embeddings
+pinecone-client>=4.0.0
 langchain-pinecone==0.1.2
 langchain-openai==0.1.23
-langchain==0.2.15
-pypdf
-tiktoken
-openai
+sentence-transformers==2.2.2
+
+# PDF and text processing
+pypdf>=3.0.0
+tiktoken>=0.5.0
+
+# LLM
+openai>=1.0.0
+anthropic>=0.7.0  # Para o Claude

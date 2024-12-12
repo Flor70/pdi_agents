@@ -1,36 +1,52 @@
 generate_metrics_summary:
   description: >
-    1. Receber um arquivo CSV contendo todas as jogadas realizadas por um jogador em torneios de poker online.
-  
-    2. **Basear-se na organização da planilha recebida:**  
-        - **Identificação Geral:**  
-          - Colunas como **Site**, **Game**, e **Hand #** fornecem informações básicas sobre o ambiente e a partida.  
-        - **Contexto do Jogo:**  
-          - **Date** e **Blinds** indicam a data e os valores das apostas no momento.  
-        - **Chip Stack e Resultados:**  
-          - Métricas como **Chips (BBs)**, **Chips Won**, e **All-In Adj BB** ajudam a calcular a lucratividade e o impacto das jogadas.  
-        - **Cartas e Ações:**  
-          - **Hole Cards**, **Position**, e ações específicas como **PF Act**, **F Act**, **T Act**, e **R Act** mostram decisões estratégicas em cada fase da jogada.  
-        - **Resultados e Vencedores:**  
-          - **Winner**, **Winning Hand**, e **Pot** fornecem dados sobre os resultados finais das mãos jogadas.  
-        - **Colunas Redundantes:**  
-          - **Marked** e **Pot (BB).1** podem ser ignoradas durante a análise, pois não fornecem informações adicionais úteis.
-    3. Processar os dados para extrair métricas essenciais de desempenho, incluindo, mas não limitado a:  
-        - VPIP (Voluntariamente Colocado no Pote).  
-        - PFR (Pré-flop Raise).  
-        - ROI (Retorno sobre o Investimento).  
-        - Taxa de vitórias (Win Rate).  
-        - Frequência de blefes bem-sucedidos.
+    Utilize a PokerAnalysisTool para analisar os dados do arquivo CSV e extrair métricas importantes de performance do jogador.
+    
+    A ferramenta irá calcular automaticamente:
+    1. Métricas Básicas:
+       - Total de mãos jogadas
+       - VPIP (Voluntariamente Colocado no Pote)
+       - PFR (Pré-flop Raise)
+       - BB/100 (Big Blinds ganhos por 100 mãos)
+       - Frequência de 3-bet
+    
+    2. Métricas por Posição:
+       - BB/100 em cada posição
+       - Quantidade de mãos jogadas por posição
+       - Frequência de jogo em cada posição
+    
+    3. Métricas de Gap:
+       - Gap entre VPIP e PFR
+       - Gap entre PFR e frequência de 3-bet
+
+    Sua tarefa é:
+    1. Utilizar a PokerAnalysisTool para processar o CSV
+    2. Estruturar os resultados no formato definido pelo modelo PokerAnalysisResult
+    3. Garantir que todos os campos do modelo sejam preenchidos corretamente
+    4. Validar se os valores estão dentro de ranges esperados para cada métrica
+
   expected_output: >
-    Um relatório com os números do jogador. Este relatório detalhado deverá ser todo fundamentado nos números extraídos do csv, com exemplos.
-    Você não deve descansar enquanto não conseguir extrair todas as informações do csv. Você NUNCA deve inventar um valor e sempre se basear no csv.
-    O relatório deve conter, mas não se limitar, aos seguintes pontos:  
-    - As métricas de desempenho calculadas com a memória de cálculo.  
-    - Os números do jogador agregados
-    - Todos os dados relevantes extraídos por você do csv com dados do jogador
-    - todas as informações relevantes do csv extraídas
-
-
+    Um objeto PokerAnalysisResult contendo:
+    
+    1. BasicMetrics:
+       - total_hands: int (número total de mãos jogadas)
+       - vpip: float (% de participação voluntária)
+       - pfr: float (% de raises no pre-flop)
+       - bb_100: float (big blinds ganhos por 100 mãos)
+       - three_bet_freq: float (% de 3-bets)
+    
+    2. PositionMetrics para cada posição (BTN, SB, BB, etc):
+       - bb_100: float (resultados por posição)
+       - hands: int (mãos jogadas na posição)
+       - frequency: float (% de jogo na posição)
+    
+    3. GapMetrics:
+       - vpip_pfr_gap: float (diferença VPIP-PFR)
+       - pfr_3bet_gap: float (diferença PFR-3bet)
+    
+    Todos os valores numéricos devem ser arredondados para 2 casas decimais.
+    Frequências devem ser expressas em porcentagem (0-100).
+    BB/100 pode ser positivo ou negativo.
 
 create_performance_report:
   description: >

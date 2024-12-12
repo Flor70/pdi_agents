@@ -10,37 +10,26 @@ load_env()
 
 import os
 import yaml
+import pathlib
 from crewai import Agent, Task, Crew, Process, LLM
-from crewai_tools import (
-    PDFSearchTool,
-    CSVSearchTool
-)
+from tools import PokerAnalysisTool
+from models.poker_metrics import PokerAnalysisResult
 
+# Set up base directory and file paths
+BASE_DIR = pathlib.Path(__file__).parent.absolute()
+CSV_PATH = str(BASE_DIR / 'data' / 'Gui Report total.csv')
 
-pdf_tool = PDFSearchTool('data/Kill Everyone_ Advanced Strategies for No-Limit Hold Em Poker Tournaments and Sit-n-Gos - PDF Room.pdf')
-csv_tool = CSVSearchTool('data/Gui Report total.csv')
+# Initialize tools
+poker_analysis_tool = PokerAnalysisTool(CSV_PATH)
 
-# Set OpenAI Model
-os.environ['OPENAI_MODEL_NAME'] = 'gpt-4o'
-claude_llm = LLM(model="claude-3-5-sonnet-20240620", 
-                 api_key=os.environ["ANTHROPIC_API_KEY"] )
+# Set Claude as LLM
+claude_llm = LLM( 
+                 model="claude-3-5-sonnet-20241022",
+                 api_key=os.environ["ANTHROPIC_API_KEY"])
 
-
-
-def load_configs():
-    # Define file paths for YAML configurations
-    files = {
-        'agents': 'config/agents.yaml',
-        'tasks': 'config/tasks.yaml'
-    }
-
-    # Load configurations from YAML files
-    configs = {}
-    for config_type, file_path in files.items():
-        with open(file_path, 'r') as file:
-            configs[config_type] = yaml.safe_load(file)
-
-    return configs['agents'], configs['tasks']
+def load_config(file_path):
+    with open(file_path, 'r') as file:
+        return yaml.safe_load(file)
 
 def create_crew(agents_config, tasks_config):
     # Creating Agents
@@ -48,17 +37,14 @@ def create_crew(agents_config, tasks_config):
         config=agents_config['metrics_analyst'],
         verbose=True,
         cache=True,
-        tools=[
-            csv_tool,],
-        LLM=claude_llm
+        tools=[poker_analysis_tool],
+        llm=claude_llm
     )
 
     report_creator_agent = Agent(
         config=agents_config['report_creator'],
         verbose=True,
-        tools=[
-            pdf_tool
-        ],
+        tools=[],
         cache=True,
         llm=claude_llm
     )
@@ -66,9 +52,6 @@ def create_crew(agents_config, tasks_config):
     educator_agent = Agent(
         config=agents_config['educator'],
         verbose=True,
-        tools=[
-            pdf_tool
-        ],
         cache=True,
         llm=claude_llm
     )
@@ -85,6 +68,7 @@ def create_crew(agents_config, tasks_config):
     generate_metrics_summary = Task(
         config=tasks_config['generate_metrics_summary'],
         agent=metrics_analyst_agent,
+        output_pydantic=PokerAnalysisResult,
         output_file='output/metrics_summary.md'
     )
 
@@ -134,15 +118,16 @@ def create_crew(agents_config, tasks_config):
     return crew
 
 def main():
-
-    
     # Load configurations
-    agents_config, tasks_config = load_configs()
+    agents_config = load_config('config/agents.yaml')
+    tasks_config = load_config('config/tasks.yaml')
 
-    # Create and run the crew
+    # Create and run crew
     crew = create_crew(agents_config, tasks_config)
     result = crew.kickoff()
-    print(result)
+
+    print("\nCrew execution completed!")
+    print("Results:", result)
 
     # Calculate and display costs
     costs = 0.150 * (crew.usage_metrics.prompt_tokens + crew.usage_metrics.completion_tokens) / 1_000_000
