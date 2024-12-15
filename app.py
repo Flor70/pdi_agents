@@ -6,6 +6,7 @@ import glob
 import pathlib
 import json
 import plotly.graph_objects as go
+from tools import PokerAnalysisTool
 
 # Set up base directory and file paths
 BASE_DIR = pathlib.Path(__file__).parent.absolute()
@@ -13,7 +14,7 @@ AGENTS_CONFIG = str(BASE_DIR / 'config' / 'agents.yaml')
 TASKS_CONFIG = str(BASE_DIR / 'config' / 'tasks.yaml')
 
 # Development mode flag
-DEV_MODE = True  # Set to False when ready for production
+DEV_MODE = False  
 
 st.set_page_config(
     page_title="Poker Analysis",
@@ -92,21 +93,42 @@ def process_analysis_files():
                     )
             except Exception as e:
                 st.error(f"Error processing file {file.name}: {str(e)}")
-    else:
-        st.warning("No analysis files found in the output directory.")
 
-if st.button("Run Analysis", type="primary", disabled=DEV_MODE):
-    with st.spinner("Running poker analysis... This might take a few minutes."):
-        try:
-            # Load configurations and create crew
-            agents_config = load_config(AGENTS_CONFIG)
-            tasks_config = load_config(TASKS_CONFIG)
-            crew = create_crew(agents_config, tasks_config)
-            crew.kickoff()
-            process_analysis_files()
+# File upload section
+uploaded_file = st.file_uploader(" Upload your poker session CSV file", type=['csv'])
+
+if uploaded_file is not None:
+    # Save uploaded file temporarily
+    temp_dir = BASE_DIR / 'data'
+    temp_dir.mkdir(exist_ok=True)
+    temp_path = temp_dir / uploaded_file.name
+    
+    with open(temp_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    
+    st.success(f"File uploaded successfully: {uploaded_file.name}")
+    
+    # Initialize tool with uploaded file
+    poker_analysis_tool = PokerAnalysisTool(str(temp_path))
+    
+    if st.button("Run Analysis", type="primary"):
+        with st.spinner("Running poker analysis... This might take a few minutes."):
+            try:
+                # Load configurations and create crew
+                agents_config = load_config(AGENTS_CONFIG)
+                tasks_config = load_config(TASKS_CONFIG)
+                crew = create_crew(agents_config, tasks_config)
+                crew.kickoff()
+                process_analysis_files()
+                    
+            except Exception as e:
+                st.error(f"An error occurred during the analysis: {str(e)}")
                 
-        except Exception as e:
-            st.error(f"An error occurred during the analysis: {str(e)}")
+            finally:
+                # Clean up temporary file
+                if temp_path.exists():
+                    os.remove(temp_path)
 else:
     if DEV_MODE:
         process_analysis_files()
+    st.info(" Please upload your poker session CSV file to begin the analysis")
