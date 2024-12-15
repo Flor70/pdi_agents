@@ -22,9 +22,13 @@ CSV_PATH = str(BASE_DIR / 'data' / 'Gui Report total.csv')
 # Initialize tools
 poker_analysis_tool = PokerAnalysisTool(CSV_PATH)
 
+OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
+# Optional: Default model selection
+OPENAI_MODEL_NAME ="gpt-4o-mini"
+
 # Set Claude as LLM
 claude_llm = LLM( 
-                 model="claude-3-5-sonnet-20241022",
+                 model="claude-3-5-haiku-20241022",
                  api_key=os.environ["ANTHROPIC_API_KEY"])
 
 def load_config(file_path):
