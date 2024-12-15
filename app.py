@@ -14,7 +14,15 @@ AGENTS_CONFIG = str(BASE_DIR / 'config' / 'agents.yaml')
 TASKS_CONFIG = str(BASE_DIR / 'config' / 'tasks.yaml')
 
 # Development mode flag
-DEV_MODE = False  
+DEV_MODE = False
+
+# Initialize session state
+if 'analysis_complete' not in st.session_state:
+    st.session_state.analysis_complete = False
+if 'last_api_key' not in st.session_state:
+    st.session_state.last_api_key = ""
+if 'analysis_costs' not in st.session_state:
+    st.session_state.analysis_costs = None
 
 st.set_page_config(
     page_title="Poker Analysis",
@@ -93,42 +101,81 @@ def process_analysis_files():
                     )
             except Exception as e:
                 st.error(f"Error processing file {file.name}: {str(e)}")
+    
+    # Add New Analysis button at the end
+    st.button("🔄 New Analysis", on_click=reset_analysis)
+    
+    # Display costs if available
+    if 'analysis_costs' in st.session_state and st.session_state.analysis_costs is not None:
+        st.caption(f"💰 Analysis cost: ${st.session_state.analysis_costs:.4f}")
 
-# File upload section
-uploaded_file = st.file_uploader(" Upload your poker session CSV file", type=['csv'])
+def reset_analysis():
+    st.session_state.analysis_complete = False
+    st.session_state.uploaded_file = None
+    st.session_state.analysis_costs = None
+    st.rerun()
 
-if uploaded_file is not None:
-    # Save uploaded file temporarily
-    temp_dir = BASE_DIR / 'data'
-    temp_dir.mkdir(exist_ok=True)
-    temp_path = temp_dir / uploaded_file.name
-    
-    with open(temp_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
-    
-    st.success(f"File uploaded successfully: {uploaded_file.name}")
-    
-    # Initialize tool with uploaded file
-    poker_analysis_tool = PokerAnalysisTool(str(temp_path))
-    
-    if st.button("Run Analysis", type="primary"):
-        with st.spinner("Running poker analysis... This might take a few minutes."):
-            try:
-                # Load configurations and create crew
-                agents_config = load_config(AGENTS_CONFIG)
-                tasks_config = load_config(TASKS_CONFIG)
-                crew = create_crew(agents_config, tasks_config)
-                crew.kickoff()
-                process_analysis_files()
+if not st.session_state.analysis_complete:
+    # API Key input
+    api_key = st.text_input("🔑 Enter your Anthropic API Key", 
+                           value=st.session_state.last_api_key,
+                           type="password", 
+                           help="Your API key will not be stored and will only be used for this analysis session")
+
+    # File upload section
+    uploaded_file = st.file_uploader("📤 Upload your poker session CSV file", type=['csv'])
+
+    if uploaded_file is not None and api_key:
+        # Save uploaded file temporarily
+        temp_dir = BASE_DIR / 'data'
+        temp_dir.mkdir(exist_ok=True)
+        temp_path = temp_dir / uploaded_file.name
+        
+        with open(temp_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        
+        st.success(f"File uploaded successfully: {uploaded_file.name}")
+        
+        # Initialize tool with uploaded file
+        poker_analysis_tool = PokerAnalysisTool(str(temp_path))
+        
+        if st.button("Run Analysis", type="primary"):
+            with st.spinner("Running poker analysis... This might take a few minutes."):
+                try:
+                    # Set the API key for this session
+                    os.environ["ANTHROPIC_API_KEY"] = api_key
+                    st.session_state.last_api_key = api_key
                     
-            except Exception as e:
-                st.error(f"An error occurred during the analysis: {str(e)}")
-                
-            finally:
-                # Clean up temporary file
-                if temp_path.exists():
-                    os.remove(temp_path)
+                    # Load configurations and create crew
+                    agents_config = load_config(AGENTS_CONFIG)
+                    tasks_config = load_config(TASKS_CONFIG)
+                    crew = create_crew(agents_config, tasks_config)
+                    crew.kickoff()
+                    
+                    # Calculate and store costs in session state
+                    costs = 0.150 * (crew.usage_metrics.prompt_tokens + crew.usage_metrics.completion_tokens) / 1_000_000
+                    st.session_state.analysis_costs = costs
+                    
+                    st.session_state.analysis_complete = True
+                    process_analysis_files()
+                        
+                except Exception as e:
+                    st.error(f"An error occurred during the analysis: {str(e)}")
+                    
+                finally:
+                    # Clean up
+                    if temp_path.exists():
+                        os.remove(temp_path)
+                    # Clear API key from environment
+                    os.environ.pop("ANTHROPIC_API_KEY", None)
+    elif not api_key:
+        st.warning("👆 Please enter your Anthropic API Key to proceed")
+    elif not uploaded_file:
+        st.info("👆 Please upload your poker session CSV file to begin the analysis")
 else:
-    if DEV_MODE:
-        process_analysis_files()
-    st.info(" Please upload your poker session CSV file to begin the analysis")
+    process_analysis_files()
+    if st.button("🔄 New Analysis"):
+        reset_analysis()
+
+if DEV_MODE:
+    process_analysis_files()
