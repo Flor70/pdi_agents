@@ -4,6 +4,8 @@
 import warnings
 warnings.filterwarnings('ignore')
 
+import sys
+
 # Load environment variables
 from helper import load_env
 load_env()
@@ -17,25 +19,38 @@ from models.poker_metrics import PokerAnalysisResult
 
 # Set up base directory and file paths
 BASE_DIR = pathlib.Path(__file__).parent.absolute()
-CSV_PATH = str(BASE_DIR / 'data' / 'Gui Report total.csv')
-
-# Initialize tools
-poker_analysis_tool = PokerAnalysisTool(CSV_PATH)
 
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 # Optional: Default model selection
 OPENAI_MODEL_NAME ="gpt-4o-mini"
 
 # Set Claude as LLM
+def get_api_key(key_name):
+    try:
+        # Try to get from Streamlit secrets first
+        import streamlit as st
+        return st.secrets[key_name]
+    except:
+        # Fallback to environment variables
+        return os.environ[key_name]
+
 claude_llm = LLM( 
                  model="claude-3-5-haiku-20241022",
-                 api_key=os.environ["ANTHROPIC_API_KEY"])
+                 api_key=get_api_key("ANTHROPIC_API_KEY"))
+
+#claude-3-5-haiku-20241022
+#claude-3-5-sonnet-20241022
 
 def load_config(file_path):
     with open(file_path, 'r') as file:
         return yaml.safe_load(file)
 
-def create_crew(agents_config, tasks_config):
+def create_crew(agents_config, tasks_config, csv_path=None):
+    # Initialize tools only if CSV path is provided
+    poker_analysis_tool = None
+    if csv_path:
+        poker_analysis_tool = PokerAnalysisTool(csv_path)
+
     # Creating Agents
     metrics_analyst_agent = Agent(
         config=agents_config['metrics_analyst'],
@@ -126,8 +141,15 @@ def main():
     agents_config = load_config('config/agents.yaml')
     tasks_config = load_config('config/tasks.yaml')
 
+    # Check if a CSV file path is provided as a command-line argument
+    if len(sys.argv) > 1:
+        csv_path = sys.argv[1]
+    else:
+        sys.exit("Please provide a CSV file path as a command-line argument.")
+
+
     # Create and run crew
-    crew = create_crew(agents_config, tasks_config)
+    crew = create_crew(agents_config, tasks_config, csv_path)
     result = crew.kickoff()
 
     print("\nCrew execution completed!")

@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import os
 from main import create_crew, load_config
 import tempfile
@@ -7,6 +8,13 @@ import pathlib
 import json
 import plotly.graph_objects as go
 from tools import PokerAnalysisTool
+
+# Set up page config
+st.set_page_config(
+    page_title="Poker Analysis",
+    page_icon="🎲",
+    layout="centered"
+)
 
 # Set up base directory and file paths
 BASE_DIR = pathlib.Path(__file__).parent.absolute()
@@ -23,18 +31,72 @@ if 'last_api_key' not in st.session_state:
     st.session_state.last_api_key = ""
 if 'analysis_costs' not in st.session_state:
     st.session_state.analysis_costs = None
+if 'current_page' not in st.session_state:
+    st.session_state.current_page = 'main'
+if 'current_file' not in st.session_state:
+    st.session_state.current_file = None
+if 'scroll_to_top' not in st.session_state:
+    st.session_state.scroll_to_top = True
 
-st.set_page_config(
-    page_title="Poker Analysis",
-    page_icon="🎲",
-    layout="centered"
-)
+def ensure_top_position():
+    if st.session_state.scroll_to_top:
+        js = '''
+            <script>
+                window.scrollTo(0, 0);
+                var body = window.document.querySelector("body");
+                body.scrollTop = 0;
+                window.parent.document.querySelector('iframe').contentWindow.scrollTo(0, 0);
+            </script>
+        '''
+        st.components.v1.html(js, height=0)
+        st.session_state.scroll_to_top = False
 
-st.title("🎲 Poker Performance Analysis")
+def show_file_content(file_path):
+    st.session_state.scroll_to_top = True
+    ensure_top_position()
+    
+    file_name = os.path.basename(file_path)
+    if file_name == 'performance_report.md':
+        title = 'Relatório de Performance'
+    elif file_name == 'educational_content.md':
+        title = 'Plano de Estudos'
+    elif file_name == 'final_summary.md':
+        title = 'Sumário Executivo'
+    elif file_name == 'matrics_summary.md':
+        title = 'Métricas de Desempenho'
+    else:
+        title = file_name
+    st.title(f"📄 {title}")
+    
+    try:
+        with open(file_path, "r") as f:
+            content = f.read()
+            st.markdown(content)
+    except Exception as e:
+        st.error(f"Error reading file: {str(e)}")
+    
+    if st.button("← Back to Analysis"):
+        st.session_state.current_page = 'main'
+        st.session_state.scroll_to_top = True
+        st.rerun()
 
-# Add a dev mode indicator
-if DEV_MODE:
-    st.info("🛠️ Development Mode: Using existing files from output directory")
+def show_main_page():
+    st.session_state.scroll_to_top = True
+    ensure_top_position()
+    
+    st.title("🎲 Poker Performance Analysis")
+    
+    # Add a dev mode indicator
+    if DEV_MODE:
+        st.info("🛠️ Development Mode: Using existing files from output directory")
+    
+    if st.session_state.analysis_complete:
+        process_analysis_files()
+    else:
+        first_analysis()
+
+
+ 
 
 def process_analysis_files():
     output_dir = BASE_DIR / 'output'
@@ -83,22 +145,23 @@ def process_analysis_files():
             summary_content = f.read()
             st.markdown(summary_content)
     
-    # File downloads
-    generated_files = list(output_dir.glob('*.md'))
+    # Get all generated markdown files
+    generated_files = list(output_dir.glob("*.md"))
+    
     if generated_files:
         st.subheader("Poker Analysis Results")
         
         cols = st.columns(2)
         for idx, file in enumerate(generated_files):
             try:
-                with open(file, "rb") as f:
-                    file_content = f.read()
-                    cols[idx % 2].download_button(
-                        label=f"📥 {file.name}",
-                        data=file_content,
-                        file_name=file.name,
-                        mime="text/markdown"
+                cols[idx % 2].button(
+                    f"📄 {file.name}",
+                    key=f"btn_{file.name}",
+                    on_click=lambda f=file: (
+                        setattr(st.session_state, 'current_page', 'file_content'),
+                        setattr(st.session_state, 'current_file', str(f)),
                     )
+                )
             except Exception as e:
                 st.error(f"Error processing file {file.name}: {str(e)}")
     
@@ -109,13 +172,7 @@ def process_analysis_files():
     if 'analysis_costs' in st.session_state and st.session_state.analysis_costs is not None:
         st.caption(f"💰 Analysis cost: ${st.session_state.analysis_costs:.4f}")
 
-def reset_analysis():
-    st.session_state.analysis_complete = False
-    st.session_state.uploaded_file = None
-    st.session_state.analysis_costs = None
-    st.rerun()
-
-if not st.session_state.analysis_complete:
+def first_analysis():
     # API Key input
     api_key = st.text_input("🔑 Enter your Anthropic API Key", 
                            value=st.session_state.last_api_key,
@@ -136,8 +193,6 @@ if not st.session_state.analysis_complete:
         
         st.success(f"File uploaded successfully: {uploaded_file.name}")
         
-        # Initialize tool with uploaded file
-        poker_analysis_tool = PokerAnalysisTool(str(temp_path))
         
         if st.button("Run Analysis", type="primary"):
             with st.spinner("Running poker analysis... This might take a few minutes."):
@@ -149,7 +204,7 @@ if not st.session_state.analysis_complete:
                     # Load configurations and create crew
                     agents_config = load_config(AGENTS_CONFIG)
                     tasks_config = load_config(TASKS_CONFIG)
-                    crew = create_crew(agents_config, tasks_config)
+                    crew = create_crew(agents_config, tasks_config, str(temp_path))
                     crew.kickoff()
                     
                     # Calculate and store costs in session state
@@ -172,10 +227,25 @@ if not st.session_state.analysis_complete:
         st.warning("👆 Please enter your Anthropic API Key to proceed")
     elif not uploaded_file:
         st.info("👆 Please upload your poker session CSV file to begin the analysis")
-else:
-    process_analysis_files()
-    if st.button("🔄 New Analysis"):
-        reset_analysis()
+    else:
+        process_analysis_files()
+        if st.button("🔄 New Analysis"):
+            reset_analysis()
+
+def reset_analysis():
+    st.session_state.analysis_complete = False
+    st.session_state.uploaded_file = None
+    st.session_state.analysis_costs = None
+    st.rerun()
+
+def main():
+    if st.session_state.current_page == 'main':
+        show_main_page()
+    elif st.session_state.current_page == 'file_content':
+        show_file_content(st.session_state.current_file)
+
+if __name__ == "__main__":
+    main()
 
 if DEV_MODE:
-    process_analysis_files()
+    main()
