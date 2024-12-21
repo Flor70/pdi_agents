@@ -1,67 +1,38 @@
 generate_metrics_summary:
   description: >
-    Utilize a PokerAnalysisTool para analisar os dados do arquivo CSV e extrair métricas importantes de performance do jogador.
-    
-    A ferramenta irá calcular automaticamente:
-    1. Métricas Básicas:
-       - Total de mãos jogadas
-       - VPIP (Voluntariamente Colocado no Pote)
-       - PFR (Pré-flop Raise)
-       - BB/100 (Big Blinds ganhos por 100 mãos)
-       - Frequência de 3-bet
-    
-    2. Métricas por Posição:
-       - BB/100 em cada posição
-       - Quantidade de mãos jogadas por posição
-       - Frequência de jogo em cada posição
-    
-    3. Métricas de Gap:
-       - Gap entre VPIP e PFR
-       - Gap entre PFR e frequência de 3-bet
-
-    Sua tarefa é:
-    1. Utilizar a PokerAnalysisTool para processar o CSV
-    2. Estruturar os resultados no formato definido pelo modelo PokerAnalysisResult
-    3. Garantir que todos os campos do modelo sejam preenchidos corretamente
-    4. Validar se os valores estão dentro de ranges esperados para cada métrica
+    1.	Inicie a conversa buscando compreender a função, cargo e nível de senioridade do usuário.
+    2.	Pergunte sobre suas especializações e principais competências técnicas (hard skills) e interpessoais (soft skills).
+    3.	Explore áreas de melhoria percebidas, tanto em habilidades técnicas quanto comportamentais.
+    4.	Investigue as principais dificuldades enfrentadas no dia a dia do trabalho, buscando exemplos concretos.
+    5.	Pergunte sobre os sentimentos do usuário em relação ao trabalho atual, incluindo motivação, satisfação e frustrações.
+    6.	Identifique os objetivos profissionais do usuário e áreas de interesse para desenvolvimento futuro.
+    7.	Certifique-se de adaptar as perguntas ao longo da entrevista com base nas respostas dadas pelo usuário.
+    8.	Finalize a entrevista garantindo que todas as informações relevantes foram coletadas e organizadas.
+    9.	Valide os dados com o usuário, confirmando a precisão das informações e se ele gostaria de adicionar algo.
+    10.	Prepare os dados coletados para análise posterior, organizando-os de forma clara e objetiva.
 
   expected_output: >
-    Um objeto PokerAnalysisResult contendo:
-    
-    1. BasicMetrics:
-       - total_hands: int (número total de mãos jogadas)
-       - vpip: float (% de participação voluntária)
-       - pfr: float (% de raises no pre-flop)
-       - bb_100: float (big blinds ganhos por 100 mãos)
-       - three_bet_freq: float (% de 3-bets)
-    
-    2. PositionMetrics para cada posição (BTN, SB, BB, etc):
-       - bb_100: float (resultados por posição)
-       - hands: int (mãos jogadas na posição)
-       - frequency: float (% de jogo na posição)
-    
-    3. GapMetrics:
-       - vpip_pfr_gap: float (diferença VPIP-PFR)
-       - pfr_3bet_gap: float (diferença PFR-3bet)
-    
-    Todos os valores numéricos devem ser arredondados para 2 casas decimais.
-    Frequências devem ser expressas em porcentagem (0-100).
-    BB/100 pode ser positivo ou negativo.
+    Um conjunto de dados completos e validados prontas para serem utilizados na análise detalhada pela ferramenta “interview_tool”, que incluam:
+    •	Função, cargo e nível de senioridade.
+    •	Especializações e competências (hard skills e soft skills).
+    •	Áreas de dificuldade no trabalho e exemplos de situações enfrentadas.
+    •	Sentimentos sobre o trabalho atual, incluindo motivação e frustrações.
+    •	Objetivos profissionais e áreas de interesse para desenvolvimento.
 
 create_performance_report:
   description: >
-   1. Receber e interpretar o relatório analítico gerado pelo Analista Estratégico de Métricas de Poker.
-   2. Utilizar a base de conhecimento fundamentada no livro de poker em formato PDF para enriquecer as análises com teorias, estratégias e melhores práticas reconhecidas no jogo.
-   3. Processar as métricas e informações do jogador para identificar:
-      - Padrões de comportamento que devem ser ajustados.
-      - Áreas de excelência que devem ser mantidas e exploradas.
-      - Oportunidades de melhoria baseadas em decisões estratégicas.
-   4. Criar um relatório detalhado e personalizado que aborde:
-      - **O que melhorar:** Identificação de falhas e sugestões práticas de correção.
-      - **O que fazer mais:** Comportamentos ou estratégias que já mostram sucesso e podem ser potencializados.
-      - **O que fazer menos ou deixar de fazer:** Erros recorrentes ou abordagens ineficazes.
-      - **O que começar a fazer:** Estratégias ou práticas sugeridas com base em dados e fundamentos teóricos do livro de poker.
-   5. Garantir que todas as sugestões sejam 100% personalizadas, conectando as métricas do jogador às recomendações teóricas para criar uma análise prática e de fácil compreensão.
+    Com base nas informações coletadas durante a entrevista:
+
+    {interview_data}
+
+    Elabore um relatório detalhado que:
+    1. Analise o perfil profissional atual
+    2. Identifique:
+       - Padrões de comportamento que devem ser ajustados
+       - Áreas de excelência que devem ser mantidas e exploradas
+       - Oportunidades de melhoria baseadas em decisões estratégicas
+    3. Crie recomendações personalizadas para desenvolvimento profissional
+    4. Sugira próximos passos concretos alinhados com os objetivos do profissional
 
   expected_output: >
    Um relatório detalhado e estruturado que inclua:

@@ -1,3 +1,3 @@
-from .poker_analysis_tool import PokerAnalysisTool
+from .interview_tool import CompleteInterviewTool
 
-__all__ = ['PokerAnalysisTool']
+__all__ = ['CompleteInterviewTool']

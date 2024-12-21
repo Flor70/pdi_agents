@@ -1,1 +1,18 @@
-{"basic_metrics":{"total_hands":26724,"vpip":30.4,"pfr":17.69,"bb_100":1.42,"three_bet_freq":1.4},"position_metrics":{"BB":{"bb_100":-49.82,"hands":3957,"frequency":14.81},"BTN":{"bb_100":20.08,"hands":3686,"frequency":13.79},"CO":{"bb_100":23.63,"hands":3704,"frequency":13.86},"EP":{"bb_100":21.94,"hands":5142,"frequency":19.24},"MP":{"bb_100":12.98,"hands":6482,"frequency":24.26},"SB":{"bb_100":-32.86,"hands":3753,"frequency":14.04}},"gap_metrics":{"vpip_pfr_gap":12.71,"pfr_3bet_gap":16.29}}
+{
+    "função_cargo": "Não coletado",
+    "área_atuação": "Não identificada",
+    "nível_senioridade": "Não definido",
+    "especializações_competências": {
+        "hard_skills": "Não mapeadas",
+        "soft_skills": "Não mapeadas"
+    },
+    "áreas_dificuldade": "Não exploradas",
+    "sentimentos_trabalho": {
+        "motivação": "Não avaliada",
+        "satisfação": "Não avaliada",
+        "frustrações": "Não identificadas"
+    },
+    "objetivos_profissionais": "Não definidos",
+    "áreas_desenvolvimento": "Não exploradas",
+    "observação_geral": "Entrevista não concluída - necessário reiniciar processo de coleta de informações"
+}

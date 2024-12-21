@@ -13,9 +13,11 @@ load_env()
 import os
 import yaml
 import pathlib
+import asyncio
 from crewai import Agent, Task, Crew, Process, LLM
-from tools import PokerAnalysisTool
-from models.poker_metrics import PokerAnalysisResult
+from tools import CompleteInterviewTool
+from interview_manager import InterviewManager
+import json
 
 # Set up base directory and file paths
 BASE_DIR = pathlib.Path(__file__).parent.absolute()
@@ -36,7 +38,7 @@ def get_api_key(key_name):
 
 claude_llm = LLM( 
                  model="claude-3-5-haiku-20241022",
-                 api_key=get_api_key("ANTHROPIC_API_KEY"))
+                 api_key=os.environ.get("CLAUDE_API_KEY"))
 
 #claude-3-5-haiku-20241022
 #claude-3-5-sonnet-20241022
@@ -45,21 +47,18 @@ def load_config(file_path):
     with open(file_path, 'r') as file:
         return yaml.safe_load(file)
 
-def create_crew(agents_config, tasks_config, csv_path=None):
-    # Initialize tools only if CSV path is provided
-    poker_analysis_tool = None
-    if csv_path:
-        poker_analysis_tool = PokerAnalysisTool(csv_path)
+async def create_crew(agents_config, tasks_config, interview_data=None):
+    # Initialize interview tool
+    interview_tool = CompleteInterviewTool()
+    if interview_data:
+        interview_tool.collected_data = interview_data
+        # Interpola os dados da entrevista na descrição da task
+        tasks_config['create_performance_report']['description'] = \
+            tasks_config['create_performance_report']['description'].format(
+                interview_data=interview_data
+            )
 
     # Creating Agents
-    metrics_analyst_agent = Agent(
-        config=agents_config['metrics_analyst'],
-        verbose=True,
-        cache=True,
-        tools=[poker_analysis_tool],
-        llm=claude_llm
-    )
-
     report_creator_agent = Agent(
         config=agents_config['report_creator'],
         verbose=True,
@@ -82,19 +81,10 @@ def create_crew(agents_config, tasks_config, csv_path=None):
         cache=True
     )
 
-
     # Creating Tasks
-    generate_metrics_summary = Task(
-        config=tasks_config['generate_metrics_summary'],
-        agent=metrics_analyst_agent,
-        output_pydantic=PokerAnalysisResult,
-        output_file='output/metrics_summary.md'
-    )
-
     create_performance_report = Task(
         config=tasks_config['create_performance_report'],
         agent=report_creator_agent,
-        context=[generate_metrics_summary],
         output_file='output/performance_report.md'
     )
 
@@ -108,24 +98,18 @@ def create_crew(agents_config, tasks_config, csv_path=None):
     generate_final_summary = Task(
         config=tasks_config['generate_final_summary'],
         agent=final_writer_agent,
-        context=[
-            generate_metrics_summary,
-            create_performance_report,
-            prepare_educational_content
-        ],
+        context=[create_performance_report, prepare_educational_content],
         output_file='output/final_summary.md'
     )
 
     # Creating Crew
     crew = Crew(
         agents=[
-            metrics_analyst_agent,
             report_creator_agent,
             educator_agent,
             final_writer_agent
         ],
         tasks=[
-            generate_metrics_summary,
             create_performance_report,
             prepare_educational_content,
             generate_final_summary
@@ -136,30 +120,28 @@ def create_crew(agents_config, tasks_config, csv_path=None):
 
     return crew
 
-def main():
+async def main():
     # Load configurations
     agents_config = load_config('config/agents.yaml')
     tasks_config = load_config('config/tasks.yaml')
 
-    # Check if a CSV file path is provided as a command-line argument
-    if len(sys.argv) > 1:
-        csv_path = sys.argv[1]
-    else:
-        sys.exit("Please provide a CSV file path as a command-line argument.")
+    # Inicializa e executa a entrevista
+    interview_manager = InterviewManager()
+    interview_data = await interview_manager.conduct_interview()
 
+    if interview_data:
+        # Create and run crew with interview data
+        crew = await create_crew(agents_config, tasks_config, interview_data)
+        result = crew.kickoff()
 
-    # Create and run crew
-    crew = create_crew(agents_config, tasks_config, csv_path)
-    result = crew.kickoff()
+        print("\nCrew execution completed!")
+        print("Results:", result)
 
-    print("\nCrew execution completed!")
-    print("Results:", result)
-
-    # Calculate and display costs
-    costs = 0.150 * (crew.usage_metrics.prompt_tokens + crew.usage_metrics.completion_tokens) / 1_000_000
-    print(f"\nTotal costs: ${costs:.4f}")
-    
-    return result
+        # Calculate and display costs
+        costs = 0.150 * (crew.usage_metrics.prompt_tokens + crew.usage_metrics.completion_tokens) / 1_000_000
+        print(f"\nTotal costs: ${costs:.4f}")
+        
+        return result
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
