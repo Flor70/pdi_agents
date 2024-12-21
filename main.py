@@ -53,10 +53,15 @@ async def create_crew(agents_config, tasks_config, interview_data=None):
     if interview_data:
         interview_tool.collected_data = interview_data
         # Interpola os dados da entrevista na descrição da task
-        tasks_config['create_performance_report']['description'] = \
-            tasks_config['create_performance_report']['description'].format(
+        tasks_config['criação_de_ações_e_objetivos_de_aprendizagem']['description'] = \
+            tasks_config['criação_de_ações_e_objetivos_de_aprendizagem']['description'].format(
                 interview_data=interview_data
             )
+        tasks_config['report_overview']['description'] = \
+            tasks_config['report_overview']['description'].format(
+                interview_data=interview_data
+            )
+        
 
     # Creating Agents
     report_creator_agent = Agent(
@@ -67,8 +72,8 @@ async def create_crew(agents_config, tasks_config, interview_data=None):
         llm=claude_llm
     )
 
-    educator_agent = Agent(
-        config=agents_config['educator'],
+    pdi_specialist_agent = Agent(
+        config=agents_config['pdi_specialist'],
         verbose=True,
         cache=True,
         llm=claude_llm
@@ -83,22 +88,31 @@ async def create_crew(agents_config, tasks_config, interview_data=None):
 
     # Creating Tasks
     create_performance_report = Task(
-        config=tasks_config['create_performance_report'],
+        config=tasks_config['criação_de_ações_e_objetivos_de_aprendizagem'],
         agent=report_creator_agent,
-        output_file='output/performance_report.md'
+        output_file='output/plano_de_aprendizagem.md',
+        async_execution=True
     )
 
-    prepare_educational_content = Task(
-        config=tasks_config['prepare_educational_content'],
-        agent=educator_agent,
+    report_overview = Task(
+        config=tasks_config['report_overview'],
+        agent=report_creator_agent,
+        output_file='output/performance_report.md',
+        async_execution=True
+    )
+
+
+    prepare_pdi = Task(
+        config=tasks_config['planejamento_estruturado_de_desenvolvimento_individual'],
+        agent=pdi_specialist_agent,
         context=[create_performance_report],
-        output_file='output/educational_content.md'
+        output_file='output/pdi.md',
     )
 
     generate_final_summary = Task(
         config=tasks_config['generate_final_summary'],
         agent=final_writer_agent,
-        context=[create_performance_report, prepare_educational_content],
+        context=[create_performance_report, prepare_pdi, report_overview],
         output_file='output/final_summary.md'
     )
 
@@ -106,12 +120,13 @@ async def create_crew(agents_config, tasks_config, interview_data=None):
     crew = Crew(
         agents=[
             report_creator_agent,
-            educator_agent,
+            pdi_specialist_agent,
             final_writer_agent
         ],
         tasks=[
             create_performance_report,
-            prepare_educational_content,
+            report_overview,
+            prepare_pdi,
             generate_final_summary
         ],
         verbose=True,

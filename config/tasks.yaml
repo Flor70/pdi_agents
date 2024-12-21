@@ -1,25 +1,47 @@
-generate_metrics_summary:
+
+criação_de_ações_e_objetivos_de_aprendizagem:
   description: >
-    1.	Inicie a conversa buscando compreender a função, cargo e nível de senioridade do usuário.
-    2.	Pergunte sobre suas especializações e principais competências técnicas (hard skills) e interpessoais (soft skills).
-    3.	Explore áreas de melhoria percebidas, tanto em habilidades técnicas quanto comportamentais.
-    4.	Investigue as principais dificuldades enfrentadas no dia a dia do trabalho, buscando exemplos concretos.
-    5.	Pergunte sobre os sentimentos do usuário em relação ao trabalho atual, incluindo motivação, satisfação e frustrações.
-    6.	Identifique os objetivos profissionais do usuário e áreas de interesse para desenvolvimento futuro.
-    7.	Certifique-se de adaptar as perguntas ao longo da entrevista com base nas respostas dadas pelo usuário.
-    8.	Finalize a entrevista garantindo que todas as informações relevantes foram coletadas e organizadas.
-    9.	Valide os dados com o usuário, confirmando a precisão das informações e se ele gostaria de adicionar algo.
-    10.	Prepare os dados coletados para análise posterior, organizando-os de forma clara e objetiva.
+    Com base nas informações coletadas durante a entrevista:
+
+    {interview_data}
+
+    Executar as seguintes tarefas:
+    1.	Análise dos Dados do Colaborador:
+    •	Examinar informações sobre a área de atuação, responsabilidades, métricas de performance, desafios, pontos fortes e objetivos profissionais.
+    •	Identificar lacunas de habilidades e áreas prioritárias de desenvolvimento.
+    2.	Criação de Ações de Aprendizagem:
+    •	Propor ideias criativas para ações educativas que atendam às necessidades do colaborador, incluindo:
+    •	Cursos e treinamentos específicos (online, presenciais ou híbridos).
+    •	Workshops interativos voltados para situações práticas e desafios reais.
+    •	Programas de mentoria com profissionais experientes na área do colaborador.
+    •	Projetos aplicados para desenvolver competências em um contexto real.
+    •	Estudo autodirigido com curadoria de materiais relevantes (e-books, podcasts, artigos, etc.).
+    •	Participação em comunidades ou eventos da área (congressos, meetups, hackathons).
+    •	Soft skills coaching para aprimoramento de habilidades interpessoais, como liderança e comunicação.
+    3.	Definição de Objetivos de Aprendizagem:
+    •	Estabelecer metas claras e mensuráveis para cada ação educativa, por exemplo:
+    •	Hard skills: “Aprimorar o uso de [ferramenta] para reduzir o tempo de execução de tarefas em X%”.
+    •	Soft skills: “Desenvolver maior assertividade em reuniões, com feedback positivo de colegas em até três meses.”
+    •	Priorizar objetivos que tragam impacto direto na performance e no alcance dos objetivos do colaborador.
+    4.	Personalização de Propostas:
+    •	Adaptar cada ação e objetivo às características do colaborador (nível de senioridade, estilo de aprendizado, disponibilidade de tempo).
+    •	Considerar desafios específicos do contexto de trabalho do colaborador.
+    5.	Estruturação do Relatório:
+    •	Organizar as ideias de forma clara e categorizada, incluindo:
+    •	Resumo das necessidades e áreas de foco.
+    •	Lista detalhada de ações de aprendizagem propostas.
+    •	Objetivos de aprendizagem associados a cada ação.
+    •	Recursos necessários e cronograma sugerido.
 
   expected_output: >
-    Um conjunto de dados completos e validados prontas para serem utilizados na análise detalhada pela ferramenta “interview_tool”, que incluam:
-    •	Função, cargo e nível de senioridade.
-    •	Especializações e competências (hard skills e soft skills).
-    •	Áreas de dificuldade no trabalho e exemplos de situações enfrentadas.
-    •	Sentimentos sobre o trabalho atual, incluindo motivação e frustrações.
-    •	Objetivos profissionais e áreas de interesse para desenvolvimento.
+    Um relatório abrangente contendo:
+    •	Diagnóstico das necessidades e prioridades de desenvolvimento do colaborador.
+    •	Conjunto criativo de ações educativas alinhadas aos objetivos e desafios individuais.
+    •	Objetivos de aprendizagem claros e mensuráveis.
+    •	Sugestões de recursos e cronograma de implementação.
+    •	Propostas organizadas de forma personalizada, prática e com potencial de impacto direto na performance.
 
-create_performance_report:
+report_overview:
   description: >
     Com base nas informações coletadas durante a entrevista:
 
@@ -48,7 +70,7 @@ create_performance_report:
    - **Tabelas e gráficos opcionais:** Para ilustrar tendências e facilitar a compreensão dos dados apresentados.
     O relatório deverá ser um guia prático e estratégico para que o jogador entenda claramente o que precisa fazer para se transformar em um jogador de poker mais eficiente, inteligente e lucrativo.
 
-prepare_educational_content:
+planejamento_estruturado_de_desenvolvimento_individual:
 
   description: >
     1. Receber o relatório detalhado criado pelo Especialista em Estratégia e Performance de Poker, que já contém análises completas sobre a performance do jogador, incluindo áreas de melhoria, forças e oportunidades.  
@@ -71,31 +93,16 @@ prepare_educational_content:
 generate_final_summary:
 
   description: >
-    1. Receber os relatórios e análises criados pelos agentes anteriores:  
-        - **Analista Estratégico de Métricas de Poker**  
-        - **Especialista em Estratégia e Performance de Poker**  
-        - **Professor de Poker**  
-    2. Revisar todo o conteúdo fornecido para identificar as informações mais importantes e relevantes.  
-    3. Condensar as análises e recomendações em um sumário executivo claro, objetivo e impactante.  
-    4. Garantir que o documento apresente de forma sucinta:  
-        - A visão geral da performance do jogador.  
-        - Os pontos fortes e fracos destacados pelos especialistas.  
-        - As recomendações principais para melhoria e os próximos passos sugeridos.  
-    5. Não realizar novas análises ou interpretações – a tarefa é reproduzir de forma sintética as informações fornecidas pelos agentes, priorizando clareza e organização.
-  
+    Criar um sumário executivo em formato markdown que sintetize as principais 
+    informações geradas sobre o colaborador, incluindo diagnóstico inicial, ações educativas, 
+    objetivos principais e cronograma. O objetivo é apresentar uma visão geral clara e objetiva 
+    em uma página, facilitando o entendimento rápido do plano de desenvolvimento e direcionando o 
+    colaborador para os documentos mais detalhados.
+
   expected_output: > 
 
-    Um **sumário executivo** da performance do jogador, contendo:  
-    - **Seção 1: Panorama Geral**  
-      - Breve descrição do desempenho atual do jogador, destacando suas métricas mais relevantes.  
-    - **Seção 2: Pontos Fortes e Fracos**  
-      - Lista objetiva das principais forças e fraquezas identificadas nos relatórios.  
-    - **Seção 3: Recomendações e Próximos Passos**  
-      - Resumo das ações sugeridas para que o jogador evolua, incluindo:  
-        - O que melhorar.  
-        - O que reforçar.  
-        - O que começar ou deixar de fazer.  
-    - **Seção 4: Conclusão Motivacional**  
-      - Um parágrafo final que inspire o jogador a colocar as recomendações em prática, destacando o potencial de crescimento e evolução no jogo.  
-
-    O sumário deve ser direto ao ponto, com linguagem acessível e motivadora, funcionando como um guia prático que o jogador pode consultar rapidamente para lembrar suas metas e próximas ações. Em suma, é a versão "cafeína concentrada" de todo o trabalho dos especialistas anteriores.
+    Um sumário executivo em markdown que sintetize as principais informações 
+    geradas sobre o colaborador, incluindo diagnóstico inicial, ações educativas, 
+    objetivos principais e cronograma. O objetivo é apresentar uma visão geral clara 
+    e objetiva em uma página, facilitando o entendimento rápido do plano de desenvolvimento 
+    e direcionando o colaborador para os documentos mais detalhados.
