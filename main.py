@@ -24,28 +24,15 @@ BASE_DIR = pathlib.Path(__file__).parent.absolute()
 
 OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 # Optional: Default model selection
-OPENAI_MODEL_NAME ="gpt-4o-mini"
+OPENAI_MODEL_NAME ="gpt-4o-2024-08-06"
 
-# Set Claude as LLM
-def get_api_key(key_name):
-    try:
-        # Try to get from Streamlit secrets first
-        import streamlit as st
-        return st.secrets[key_name]
-    except:
-        # Fallback to environment variables
-        return os.environ[key_name]
-
-claude_llm = LLM( 
-                 model="claude-3-5-haiku-20241022",
-                 api_key=os.environ.get("CLAUDE_API_KEY"))
-
-#claude-3-5-haiku-20241022
-#claude-3-5-sonnet-20241022
-
-def load_config(file_path):
-    with open(file_path, 'r') as file:
-        return yaml.safe_load(file)
+def load_config(agents_file, tasks_file):
+    """Load configuration from YAML files"""
+    with open(agents_file, 'r') as f:
+        agents_config = yaml.safe_load(f)
+    with open(tasks_file, 'r') as f:
+        tasks_config = yaml.safe_load(f)
+    return agents_config, tasks_config
 
 async def create_crew(agents_config, tasks_config, interview_data=None):
     # Initialize interview tool
@@ -61,7 +48,6 @@ async def create_crew(agents_config, tasks_config, interview_data=None):
             tasks_config['report_overview']['description'].format(
                 interview_data=interview_data
             )
-        
 
     # Creating Agents
     report_creator_agent = Agent(
@@ -69,20 +55,17 @@ async def create_crew(agents_config, tasks_config, interview_data=None):
         verbose=True,
         tools=[],
         cache=True,
-        llm=claude_llm
     )
 
     pdi_specialist_agent = Agent(
         config=agents_config['pdi_specialist'],
         verbose=True,
         cache=True,
-        llm=claude_llm
     )
 
     final_writer_agent = Agent(
         config=agents_config['final_writer'],
         verbose=True,
-        llm=claude_llm,
         cache=True
     )
 
@@ -100,7 +83,6 @@ async def create_crew(agents_config, tasks_config, interview_data=None):
         output_file='output/performance_report.md',
         async_execution=True
     )
-
 
     prepare_pdi = Task(
         config=tasks_config['planejamento_estruturado_de_desenvolvimento_individual'],

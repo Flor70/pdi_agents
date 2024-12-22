@@ -73,23 +73,19 @@ report_overview:
 planejamento_estruturado_de_desenvolvimento_individual:
 
   description: >
-    1. Receber o relatório detalhado criado pelo Especialista em Estratégia e Performance de Poker, que já contém análises completas sobre a performance do jogador, incluindo áreas de melhoria, forças e oportunidades.  
-    2. Consultar um renomado livro de poker (disponível em formato PDF na base de conhecimento) para fundamentar o plano de estudo com as melhores práticas, estratégias e conteúdos teóricos.  
-    3. Criar um plano de estudo totalmente personalizado, com:  
-        - **Conteúdos prioritários:** O que o jogador deve aprender para corrigir falhas (ex.: leitura de ranges, estratégia de blinds, ou quando NÃO fazer aquele blefe heroico).  
-        - **Reforço de acertos:** Áreas em que o jogador já é bom, mas pode se tornar excelente (ou seja, consolidar aquela habilidade que faz ele parecer um profissional nas mesas).  
-        - **Novos horizontes:** Conteúdos que o jogador talvez nem saiba que precisa, mas que vão transformá-lo na versão "next-level" de si mesmo.  
-    4. Garantir que o plano seja claro, progressivo e estruturado com toques de humor para manter o jogador motivado durante o aprendizado. Afinal, poker é coisa séria, mas aprender não precisa ser tão tenso quanto estar "all-in" com um par baixo.  
-
+    transformar o relatório de ações educativas e objetivos de aprendizagem em um Plano de Desenvolvimento
+     Individual (PDI) estruturado para um período de 1 ano. A tarefa inclui organizar as ações em uma sequência lógica, 
+     distribuí-las ao longo de 12 meses e documentá-las em um formato que permita fácil acompanhamento pelo colaborador. 
+     O PDI final deve conter uma tabela em markdown com descrições claras e etapas organizadas.
   expected_output: >
-    Um documento de plano de estudo que:  
-    - Contenha uma lista personalizada e organizada de tópicos teóricos e práticos que o jogador deve estudar.  
-    - Inclua referências diretas ao livro de poker consultado, conectando o aprendizado teórico à prática diária do jogador.  
-    - Ofereça sugestões de exercícios ou simulações que ajudem o jogador a internalizar os conceitos.  
-    - Apresente as recomendações com um toque de leveza e bom humor, mantendo o jogador engajado e confiante de que está no caminho para dominar as mesas.  
-    - Seja um guia prático e motivador, que faça o jogador sentir que aprender poker é tão divertido quanto ganhar um pote gigante (sem ter que mostrar as cartas!).  
-    Ao final, o jogador terá um plano que é como um "GPS do poker" – com ele, chegar ao destino de ser um jogador lucrativo e imbatível será só questão de tempo (e algumas boas leituras entre as sessões).
-
+    	•	Plano de Desenvolvimento Individual (PDI) com:
+    •	Tabela em Markdown, contendo:
+    •	Divisão trimestral e mensal das ações.
+    •	Descrição clara de cada ação/objetivo.
+    •	Resultados esperados e recursos necessários.
+    •	Metas trimestrais bem definidas para facilitar o acompanhamento.
+    •	Estrutura equilibrada e personalizada, permitindo que o colaborador entenda exatamente o que deve ser 
+    feito ao longo do ano e como acompanhar seu progresso.˜
 generate_final_summary:
 
   description: >
@@ -105,4 +101,5 @@ generate_final_summary:
     geradas sobre o colaborador, incluindo diagnóstico inicial, ações educativas, 
     objetivos principais e cronograma. O objetivo é apresentar uma visão geral clara 
     e objetiva em uma página, facilitando o entendimento rápido do plano de desenvolvimento 
-    e direcionando o colaborador para os documentos mais detalhados.
+    e direcionando o colaborador para os documentos mais detalhados. A formatação em markdown
+    não precisa ser indicada, já temos um interpretador de markdown pronto.

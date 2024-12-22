@@ -6,17 +6,18 @@ import asyncio
 import os
 
 class InterviewManager:
-    def __init__(self):
-        self.llm = ChatOpenAI(
-            temperature=0.7,
-            model="gpt-4o-2024-08-06",
-            api_key=os.environ.get("OPENAI_API_KEY")
-        )
+    def __init__(self, llm=None):
+        self.llm = llm
         self.memory = ConversationBufferMemory(return_messages=True)
         self.interview_complete = False
         self.collected_data = None
     
     async def conduct_interview(self):
+        if not self.llm:
+            self.llm = ChatOpenAI(
+                model="gpt-4o-2024-08-06"
+            )
+        
         system_prompt = """
         Você é um consultor profissional conduzindo uma entrevista.
         Seu objetivo é coletar naturalmente informações sobre:
