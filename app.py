@@ -185,9 +185,8 @@ def show_main_page():
                     crew = asyncio.run(create_crew(agents_config, tasks_config, st.session_state.interview_data))
                     result = crew.kickoff()
                 
-                # Redireciona para a página de análise
-                st.session_state.current_page = 'file_content'
-                st.session_state.current_file = os.path.join(OUTPUT_DIR, 'final_summary.md')
+                # Redireciona para a página principal
+                st.session_state.current_page = 'main'
                 st.rerun()
             else:
                 # Adiciona resposta normal do assistente
