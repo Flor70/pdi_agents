@@ -1,3 +1,11 @@
+# SQLite3 version fix for Streamlit Cloud
+import sqlite3
+import sys
+
+if sqlite3.sqlite_version_info < (3, 35, 0):
+    __import__('pysqlite3')
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 import streamlit as st
 import streamlit.components.v1 as components
 import os
