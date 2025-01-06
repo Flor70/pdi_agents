@@ -19,6 +19,9 @@ sentence-transformers==2.2.2
 pypdf>=3.0.0
 tiktoken>=0.5.0
 
+# SQLite dependency
+pysqlite3-binary>=0.5.2
+
 # Streamlit
 streamlit>=1.29.0
 # Visualization
