@@ -118,6 +118,20 @@ def process_analysis_files():
         st.session_state.interview_data = None
         st.rerun()
 
+def verify_api_key(api_key):
+    """Verifica se a chave da API OpenAI é válida"""
+    try:
+        client = ChatOpenAI(
+            api_key=api_key,
+            model="gpt-4o-mini"
+        )
+        # Faz uma chamada simples para testar a API
+        response = client.invoke("Olá")
+        return True
+    except Exception as e:
+        st.error(f"Chave da API inválida!")
+        return False
+
 def show_main_page():
     st.title("👥 PDI Crew - Análise de Desenvolvimento Profissional")
     
@@ -125,9 +139,12 @@ def show_main_page():
     if 'openai_api_key' not in st.session_state:
         api_key = st.text_input("🔑 OpenAI API Key", type="password")
         if api_key:
-            st.session_state.openai_api_key = api_key
-            os.environ["OPENAI_API_KEY"] = api_key
-            st.rerun()
+            # Verifica se a chave é válida antes de prosseguir
+            if verify_api_key(api_key):
+                st.session_state.openai_api_key = api_key
+                os.environ["OPENAI_API_KEY"] = api_key
+                st.success("✅ API Key válida!")
+                st.rerun()
         st.stop()
 
     if st.session_state.interview_complete:
