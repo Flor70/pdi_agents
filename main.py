@@ -22,7 +22,6 @@ import json
 # Set up base directory and file paths
 BASE_DIR = pathlib.Path(__file__).parent.absolute()
 
-OPENAI_API_KEY = os.environ["OPENAI_API_KEY"]
 # Optional: Default model selection
 OPENAI_MODEL_NAME ="gpt-4o-2024-08-06"
 
@@ -34,7 +33,12 @@ def load_config(agents_file, tasks_file):
         tasks_config = yaml.safe_load(f)
     return agents_config, tasks_config
 
-async def create_crew(agents_config, tasks_config, interview_data=None):
+async def create_crew(agents_config, tasks_config, interview_data=None, openai_api_key=None):
+    if not openai_api_key:
+        raise ValueError("OpenAI API key is required")
+    
+    os.environ["OPENAI_API_KEY"] = openai_api_key
+
     # Initialize interview tool
     interview_tool = CompleteInterviewTool()
     if interview_data:
@@ -119,8 +123,7 @@ async def create_crew(agents_config, tasks_config, interview_data=None):
 
 async def main():
     # Load configurations
-    agents_config = load_config('config/agents.yaml')
-    tasks_config = load_config('config/tasks.yaml')
+    agents_config, tasks_config = load_config('config/agents.yaml', 'config/tasks.yaml')
 
     # Inicializa e executa a entrevista
     interview_manager = InterviewManager()
@@ -128,7 +131,7 @@ async def main():
 
     if interview_data:
         # Create and run crew with interview data
-        crew = await create_crew(agents_config, tasks_config, interview_data)
+        crew = await create_crew(agents_config, tasks_config, interview_data, openai_api_key=os.environ.get("OPENAI_API_KEY"))
         result = crew.kickoff()
 
         print("\nCrew execution completed!")

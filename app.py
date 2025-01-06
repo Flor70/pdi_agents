@@ -190,7 +190,7 @@ def show_main_page():
                 # Carrega configurações e executa a crew em segundo plano
                 with st.spinner("Aguarde, estamos realizando o seu plano de desenvolvimento..."):
                     agents_config, tasks_config = load_config(AGENTS_CONFIG, TASKS_CONFIG)
-                    crew = asyncio.run(create_crew(agents_config, tasks_config, st.session_state.interview_data))
+                    crew = asyncio.run(create_crew(agents_config, tasks_config, st.session_state.interview_data, openai_api_key=st.session_state.openai_api_key))
                     result = crew.kickoff()
                 
                 # Redireciona para a página principal
