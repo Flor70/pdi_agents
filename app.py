@@ -41,14 +41,14 @@ if 'current_file' not in st.session_state:
 
 def show_file_content(file_path):
     file_name = os.path.basename(file_path)
-    if file_name == 'performance_report.md':
-        title = 'Relatório de Performance'
+    if file_name == 'analise_perfil.md':
+        title = 'Análise do Perfil'
     elif file_name == 'pdi.md':
         title = 'Plano de Desenvolvimento Individual'
     elif file_name == 'final_summary.md':
         title = 'Sumário Executivo'
-    elif file_name == 'plano_de_aprendizagem.md':
-        title = 'Plano de Aprendizagem'
+    elif file_name == 'recomendacoes.md':
+        title = 'Recomendações Educacionais'
     else:
         title = file_name
     
@@ -88,9 +88,10 @@ def process_analysis_files():
     
     # Get all generated markdown files
     generated_files = [
-        output_dir / 'pdi.md',
-        output_dir / 'performance_report.md',
-        output_dir / 'plano_de_aprendizagem.md'
+        output_dir / 'pdi.md',  # Plano de Desenvolvimento Individual
+        output_dir / 'analise_perfil.md',  # Análise do Perfil
+        output_dir / 'recomendacoes.md',  # Recomendações Educacionais
+        output_dir / 'final_summary.md'  # Sumário Executivo
     ]
     
     if any(f.exists() for f in generated_files):
@@ -100,9 +101,21 @@ def process_analysis_files():
         for idx, file in enumerate(generated_files):
             if file.exists():
                 try:
+                    file_name = file.name
+                    if file_name == 'analise_perfil.md':
+                        title = 'Análise do Perfil'
+                    elif file_name == 'pdi.md':
+                        title = 'Plano de Desenvolvimento Individual'
+                    elif file_name == 'final_summary.md':
+                        title = 'Sumário Executivo'
+                    elif file_name == 'recomendacoes.md':
+                        title = 'Recomendações Educacionais'
+                    else:
+                        title = file_name
+
                     cols[idx % 2].button(
-                        f"📄 {file.name}",
-                        key=f"btn_{file.name}",
+                        f"📄 {title}",
+                        key=f"btn_{file_name}",
                         on_click=lambda f=file: (
                             setattr(st.session_state, 'current_page', 'file_content'),
                             setattr(st.session_state, 'current_file', str(f)),
@@ -156,18 +169,49 @@ def show_main_page():
                 model="gpt-4o-2024-08-06"
             )
             system_prompt = """
-            Você é um consultor profissional conduzindo uma entrevista.
-            Seu objetivo é coletar naturalmente informações sobre:
-            - Área de atuação e responsabilidades
-            - Métricas quantitativas de performance
-            - Desafios enfrentados
-            - Pontos fortes
-            - Objetivos profissionais
+            Você é um consultor profissional especializado em desenvolvimento de carreira e aprendizagem.
+            Seu objetivo é conduzir uma entrevista natural e empática para coletar informações sobre um colaborador.
+            Na condução de sua entrevista você deverá fazer perguntas curtas e claras até que tenha coletado 
+            informações detalhadas sobre:
+
+            1. Perfil Profissional:
+            - Área de atuação atual e tempo de experiência
+            - Principais responsabilidades e atividades diárias
+            - Nível de senioridade e escopo de atuação
+
+            2. Performance e Resultados:
+            - Métricas quantitativas de performance (KPIs, metas atingidas, etc.)
+            - Projetos relevantes concluídos ou em andamento
+            - Impacto do seu trabalho na organização
+
+            3. Desenvolvimento Profissional:
+            - Desafios técnicos e não-técnicos enfrentados no dia a dia
+            - Pontos fortes e competências já bem desenvolvidas
+            - Áreas que gostaria de melhorar ou desenvolver
+            - Preferências de formato de aprendizagem (cursos, leitura, vídeos, etc.)
+            - Disponibilidade de tempo para estudos
+
+            4. Aspirações e Objetivos:
+            - Objetivos profissionais de curto prazo (6-12 meses)
+            - Objetivos de carreira de longo prazo
+            - Áreas de interesse para especialização
+            - Habilidades que gostaria de adquirir ou aprimorar
+
+            Conduza a entrevista de forma conversacional, fazendo perguntas de follow-up quando necessário 
+            para obter informações mais específicas e detalhadas. NUNCA faça perguntas muito longas. 
+            Tente, quando possível, fazer algum comentário curto e empático sobre a última resposta do entrevistado antes de fazer a pergunta seguinte 
+            de modo a garantir uma conversa fluida e natural.
+
+            IMPORTANTE:
 
             Quando você tiver coletado todas as informações necessárias, responda com o prefixo 
             [INTERVIEW_COMPLETE] seguido por um resumo estruturado das informações coletadas.
-            O resumo deve ser em formato de texto, organizado por tópicos, incluindo citações 
-            relevantes das respostas do entrevistado.
+
+            Se o usuário responder [finalize] você deverá inventar a entrevista e responde com o prefixo [INTERVIEW_COMPLETE] 
+
+            O resumo deve ser em formato de texto, organizado pelos tópicos acima, incluindo citações 
+            relevantes das respostas do entrevistado e destacando pontos importantes para a 
+            criação de um plano de desenvolvimento personalizado.
             """
             # Initialize messages with system prompt
             st.session_state.llm_messages = [{"role": "system", "content": system_prompt}]

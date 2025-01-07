@@ -1,45 +1,63 @@
-
-criação_de_ações_e_objetivos_de_aprendizagem:
+analise_subjetiva_colaborador:
   description: >
     Com base nas informações coletadas durante a entrevista:
 
     {interview_data}
 
-    Executar as seguintes tarefas:
-    1.	Análise dos Dados do Colaborador:
-    •	Examinar informações sobre a área de atuação, responsabilidades, métricas de performance, desafios, pontos fortes e objetivos profissionais.
-    •	Identificar lacunas de habilidades e áreas prioritárias de desenvolvimento.
-    2.	Criação de Ações de Aprendizagem:
-    •	Propor ideias criativas para ações educativas que atendam às necessidades do colaborador, incluindo:
-    •	Cursos e treinamentos específicos (online, presenciais ou híbridos).
-    •	Workshops interativos voltados para situações práticas e desafios reais.
-    •	Programas de mentoria com profissionais experientes na área do colaborador.
-    •	Projetos aplicados para desenvolver competências em um contexto real.
-    •	Estudo autodirigido com curadoria de materiais relevantes (e-books, podcasts, artigos, etc.).
-    •	Participação em comunidades ou eventos da área (congressos, meetups, hackathons).
-    •	Soft skills coaching para aprimoramento de habilidades interpessoais, como liderança e comunicação.
-    3.	Definição de Objetivos de Aprendizagem:
-    •	Estabelecer metas claras e mensuráveis para cada ação educativa, por exemplo:
-    •	Hard skills: “Aprimorar o uso de [ferramenta] para reduzir o tempo de execução de tarefas em X%”.
-    •	Soft skills: “Desenvolver maior assertividade em reuniões, com feedback positivo de colegas em até três meses.”
-    •	Priorizar objetivos que tragam impacto direto na performance e no alcance dos objetivos do colaborador.
-    4.	Personalização de Propostas:
-    •	Adaptar cada ação e objetivo às características do colaborador (nível de senioridade, estilo de aprendizado, disponibilidade de tempo).
-    •	Considerar desafios específicos do contexto de trabalho do colaborador.
-    5.	Estruturação do Relatório:
-    •	Organizar as ideias de forma clara e categorizada, incluindo:
-    •	Resumo das necessidades e áreas de foco.
-    •	Lista detalhada de ações de aprendizagem propostas.
-    •	Objetivos de aprendizagem associados a cada ação.
-    •	Recursos necessários e cronograma sugerido.
+    Executar uma análise aprofundada do perfil do colaborador:
+
+    1. Análise do Contexto Profissional:
+    • Examinar detalhadamente a área de atuação e responsabilidades atuais
+    • Avaliar o nível de senioridade e escopo de influência
+    • Identificar os principais desafios e complexidades da função
+
+    2. Avaliação de Performance:
+    • Analisar as métricas de performance apresentadas
+    • Identificar padrões de sucesso e áreas de dificuldade
+    • Avaliar a evolução do desempenho ao longo do tempo
+
+    3. Mapeamento de Competências:
+    • Identificar pontos fortes e diferenciais do colaborador
+    • Mapear gaps de habilidades técnicas e comportamentais
+    • Avaliar o nível de maturidade em diferentes competências
+
+    4. Análise de Aspirações:
+    • Compreender os objetivos de carreira de curto e longo prazo
+    • Identificar motivadores e interesses profissionais
+    • Avaliar o alinhamento entre aspirações e perfil atual
+
+    5. Diagnóstico de Necessidades:
+    • Priorizar áreas críticas para desenvolvimento
+    • Identificar oportunidades de crescimento
+    • Avaliar barreiras potenciais para o desenvolvimento
 
   expected_output: >
-    Um relatório abrangente contendo:
-    •	Diagnóstico das necessidades e prioridades de desenvolvimento do colaborador.
-    •	Conjunto criativo de ações educativas alinhadas aos objetivos e desafios individuais.
-    •	Objetivos de aprendizagem claros e mensuráveis.
-    •	Sugestões de recursos e cronograma de implementação.
-    •	Propostas organizadas de forma personalizada, prática e com potencial de impacto direto na performance.
+    Um relatório analítico detalhado contendo:
+
+    1. Perfil Profissional:
+    • Resumo do contexto atual e trajetória
+    • Análise das responsabilidades e impacto
+    • Avaliação do nível de senioridade e maturidade
+
+    2. Análise de Performance:
+    • Interpretação das métricas apresentadas
+    • Identificação de padrões e tendências
+    • Avaliação de pontos fortes e áreas de melhoria
+
+    3. Mapa de Competências:
+    • Detalhamento dos pontos fortes identificados
+    • Análise dos gaps de competências
+    • Avaliação do nível de maturidade em diferentes áreas
+
+    4. Aspirações e Objetivos:
+    • Síntese dos objetivos de carreira
+    • Análise dos motivadores e interesses
+    • Avaliação do alinhamento com o perfil atual
+
+    5. Recomendações de Desenvolvimento:
+    • Priorização das áreas de desenvolvimento
+    • Identificação de oportunidades de crescimento
+    • Sugestões para superar barreiras identificadas
 
 report_overview:
   description: >
@@ -56,36 +74,85 @@ report_overview:
     3. Crie recomendações personalizadas para desenvolvimento profissional
     4. Sugira próximos passos concretos alinhados com os objetivos do profissional
 
-  expected_output: >
-   Um relatório detalhado e estruturado que inclua:
-   - **Seções principais de análise:**  
+  expected_output: > 
+    IMPORTANTE: A formatação em markdown não precisa ser indicada, já temos um interpretador de markdown pronto. Não comece o seu resultado com '```markdown' ou algo do tipo pois isso prejudica nossa ferramenta.
+
+    Um relatório detalhado e estruturado que inclua:
+    - **Seções principais de análise:**  
      - Identificação de pontos fortes e fracos.  
      - Sugestões personalizadas para melhoria.  
      - Referências claras às métricas analisadas e ao embasamento teórico do livro de poker.  
-   - **Propostas práticas e acionáveis:**  
+    - **Propostas práticas e acionáveis:**  
      - Sugestões para ações imediatas que melhorem a performance.  
      - Estratégias teóricas adaptadas ao estilo e dados do jogador.  
-   - **Clareza e personalização:**  
+    - **Clareza e personalização:**  
      - Relatório claro, objetivo e com orientações diretamente aplicáveis à rotina do jogador.  
-   - **Tabelas e gráficos opcionais:** Para ilustrar tendências e facilitar a compreensão dos dados apresentados.
+    - **Tabelas e gráficos opcionais:** Para ilustrar tendências e facilitar a compreensão dos dados apresentados.
     O relatório deverá ser um guia prático e estratégico para que o jogador entenda claramente o que precisa fazer para se transformar em um jogador de poker mais eficiente, inteligente e lucrativo.
 
 planejamento_estruturado_de_desenvolvimento_individual:
-
   description: >
-    transformar o relatório de ações educativas e objetivos de aprendizagem em um Plano de Desenvolvimento
-     Individual (PDI) estruturado para um período de 1 ano. A tarefa inclui organizar as ações em uma sequência lógica, 
-     distribuí-las ao longo de 12 meses e documentá-las em um formato que permita fácil acompanhamento pelo colaborador. 
-     O PDI final deve conter uma tabela em markdown com descrições claras e etapas organizadas.
+    Com base na análise do perfil do colaborador e nas recomendações de conteúdo fornecidas,
+    criar um Plano de Desenvolvimento Individual (PDI) estruturado para 12 meses que:
+
+    1. Integre Informações:
+    • Utilize a análise do perfil profissional para entender o contexto e necessidades
+    • Considere as recomendações de conteúdo e sua priorização
+    • Alinhe o plano com os objetivos de carreira identificados
+
+    2. Estruture a Jornada de Aprendizagem:
+    • Organize os conteúdos em uma sequência lógica de desenvolvimento
+    • Distribua as atividades ao longo dos 12 meses de forma equilibrada
+    • Considere a complexidade e interdependência entre os conteúdos
+    • Estabeleça marcos de progresso claros e mensuráveis
+
+    3. Defina Elementos de Acompanhamento:
+    • Crie indicadores de progresso para cada trimestre
+    • Estabeleça pontos de verificação e revisão
+    • Defina critérios claros de conclusão para cada etapa
+
+    4. Documente o Plano:
+    • Utilize formato tabular em markdown para fácil visualização
+    • Inclua descrições claras e objetivas das atividades
+    • Forneça orientações práticas para execução
+
   expected_output: >
-    	•	Plano de Desenvolvimento Individual (PDI) com:
-    •	Tabela em Markdown, contendo:
-    •	Divisão trimestral e mensal das ações.
-    •	Descrição clara de cada ação/objetivo.
-    •	Resultados esperados e recursos necessários.
-    •	Metas trimestrais bem definidas para facilitar o acompanhamento.
-    •	Estrutura equilibrada e personalizada, permitindo que o colaborador entenda exatamente o que deve ser 
-    feito ao longo do ano e como acompanhar seu progresso.˜
+    IMPORTANTE: A formatação em markdown não precisa ser indicada, já temos um interpretador de markdown pronto. Não comece o seu resultado com '```markdown' ou algo do tipo pois isso prejudica nossa ferramenta.
+
+    Um Plano de Desenvolvimento Individual (PDI) completo contendo:
+
+    1. Visão Geral:
+    • Resumo do perfil e objetivos do colaborador
+    • Principais áreas de desenvolvimento identificadas
+    • Resultados esperados ao final dos 12 meses
+
+    2. Plano Estruturado (em formato tabular markdown):
+    • Divisão por trimestres e meses
+    • Para cada período:
+      - Conteúdos e atividades programadas
+      - Objetivos específicos de aprendizagem
+      - Resultados esperados
+      - Recursos necessários
+      - Indicadores de progresso
+
+    3. Marcos e Acompanhamento:
+    • Metas trimestrais detalhadas
+    • Critérios de avaliação de progresso
+    • Pontos de verificação e ajuste
+    
+    4. Orientações de Execução:
+    • Recomendações práticas para gestão do tempo
+    • Estratégias para maximizar o aprendizado
+    • Dicas para superar possíveis obstáculos
+
+ler_planilha:
+  description: >
+    Utilize a tool 'read_educational_db' para ler e retornar o conteúdo completo 
+    da planilha de conteúdos educacionais disponíveis.
+  expected_output: >
+    Uma lista estruturada de todos os conteúdos educacionais disponíveis, incluindo 
+    nome, tipo, área do conhecimento, nível e descrição de cada item.
+
 generate_final_summary:
 
   description: >
@@ -95,11 +162,45 @@ generate_final_summary:
     em uma página, facilitando o entendimento rápido do plano de desenvolvimento e direcionando o 
     colaborador para os documentos mais detalhados.
 
-  expected_output: > 
+  expected_output: >
+    IMPORTANTE: A formatação em markdown não precisa ser indicada, já temos um interpretador de markdown pronto. Não comece o seu resultado com '```markdown' ou algo do tipo pois isso prejudica nossa ferramenta.
 
     Um sumário executivo em markdown que sintetize as principais informações 
     geradas sobre o colaborador, incluindo diagnóstico inicial, ações educativas, 
     objetivos principais e cronograma. O objetivo é apresentar uma visão geral clara 
     e objetiva em uma página, facilitando o entendimento rápido do plano de desenvolvimento 
-    e direcionando o colaborador para os documentos mais detalhados. A formatação em markdown
-    não precisa ser indicada, já temos um interpretador de markdown pronto.
+    e direcionando o colaborador para os documentos mais detalhados. 
+
+recomendacao_conteudos:
+  description: >
+    Com base nas informações coletadas durante a entrevista: {interview_data}
+    
+    E utilizando os conteúdos disponíveis no catálogo fornecido pelo leitor_de_planilha,
+    analise cuidadosamente e selecione os conteúdos mais adequados para o desenvolvimento
+    do colaborador.
+    
+    Para cada conteúdo selecionado, você deve:
+    1. Explicar por que esse conteúdo específico é relevante para o colaborador
+    2. Relacionar o conteúdo com as necessidades, objetivos ou gaps identificados na entrevista
+    3. Sugerir uma ordem de prioridade para consumo dos conteúdos
+    4. Indicar como o conteúdo se alinha com os objetivos de desenvolvimento do colaborador
+  
+  expected_output: >
+    IMPORTANTE: A formatação em markdown não precisa ser indicada, já temos um interpretador de markdown pronto. Não comece o seu resultado com '```markdown' ou algo do tipo pois isso prejudica nossa ferramenta.
+
+    Um relatório detalhado contendo:
+    
+    1. Lista dos conteúdos recomendados, cada um com:
+       - Nome e tipo do conteúdo
+       - Justificativa detalhada da escolha
+       - Relação com as necessidades identificadas
+       - Prioridade sugerida
+       - Benefícios esperados
+    
+    2. Plano de sequenciamento:
+       - Ordem sugerida para consumo dos conteúdos
+       - Justificativa para a sequência proposta
+    
+    3. Alinhamento estratégico:
+       - Como os conteúdos selecionados contribuem para os objetivos de desenvolvimento
+       - Resultados esperados após a conclusão dos conteúdos

@@ -14,10 +14,10 @@ import os
 import yaml
 import pathlib
 import asyncio
-from crewai import Agent, Task, Crew, Process, LLM
+from crewai import Agent, Task, Crew, Process
 from tools import CompleteInterviewTool
+from tools.educational_content_tool import ReadEducationalDBTool
 from interview_manager import InterviewManager
-import json
 
 # Set up base directory and file paths
 BASE_DIR = pathlib.Path(__file__).parent.absolute()
@@ -26,11 +26,22 @@ BASE_DIR = pathlib.Path(__file__).parent.absolute()
 OPENAI_MODEL_NAME ="gpt-4o-2024-08-06"
 
 def load_config(agents_file, tasks_file):
-    """Load configuration from YAML files"""
+    """
+    Load configuration files for agents and tasks.
+    
+    Args:
+        agents_file: Path to the agents configuration file
+        tasks_file: Path to the tasks configuration file
+    
+    Returns:
+        Tuple containing agents and tasks configurations
+    """
     with open(agents_file, 'r') as f:
         agents_config = yaml.safe_load(f)
+    
     with open(tasks_file, 'r') as f:
         tasks_config = yaml.safe_load(f)
+    
     return agents_config, tasks_config
 
 async def create_crew(agents_config, tasks_config, interview_data=None, openai_api_key=None):
@@ -39,91 +50,120 @@ async def create_crew(agents_config, tasks_config, interview_data=None, openai_a
     
     os.environ["OPENAI_API_KEY"] = openai_api_key
 
-    # Initialize interview tool
-    interview_tool = CompleteInterviewTool()
+    # Initialize tools
+    educational_db_tool = ReadEducationalDBTool()
+    
     if interview_data:
-        interview_tool.collected_data = interview_data
-        # Interpola os dados da entrevista na descrição da task
-        tasks_config['criação_de_ações_e_objetivos_de_aprendizagem']['description'] = \
-            tasks_config['criação_de_ações_e_objetivos_de_aprendizagem']['description'].format(
-                interview_data=interview_data
-            )
-        tasks_config['report_overview']['description'] = \
-            tasks_config['report_overview']['description'].format(
-                interview_data=interview_data
-            )
+        # Interpola os dados da entrevista nas descrições das tasks
+        for task_name in ['analise_subjetiva_colaborador', 'recomendacao_conteudos']:
+            if task_name in tasks_config:
+                tasks_config[task_name]['description'] = \
+                    tasks_config[task_name]['description'].format(
+                        interview_data=interview_data
+                    )
 
     # Creating Agents
-    report_creator_agent = Agent(
-        config=agents_config['report_creator'],
+    leitor_de_planilha = Agent(
+        config=agents_config['leitor_de_planilha'],
+        verbose=True,
+        tools=[educational_db_tool],
+        cache=True
+    )
+
+    analista_de_perfis = Agent(
+        config=agents_config['analista_de_perfis'],
         verbose=True,
         tools=[],
-        cache=True,
+        cache=True
     )
 
-    pdi_specialist_agent = Agent(
+    analista_conteudo_educacional = Agent(
+        config=agents_config['analista_conteudo_educacional'],
+        verbose=True,
+        tools=[],
+        cache=True
+    )
+
+    pdi_specialist = Agent(
         config=agents_config['pdi_specialist'],
         verbose=True,
-        cache=True,
+        tools=[],
+        cache=True
     )
 
-    final_writer_agent = Agent(
+    final_writer = Agent(
         config=agents_config['final_writer'],
         verbose=True,
+        tools=[],
         cache=True
     )
 
     # Creating Tasks
-    create_performance_report = Task(
-        config=tasks_config['criação_de_ações_e_objetivos_de_aprendizagem'],
-        agent=report_creator_agent,
-        output_file='output/plano_de_aprendizagem.md',
+    ler_planilha = Task(
+        config=tasks_config['ler_planilha'],
+        agent=leitor_de_planilha,
+    )
+
+    analise_subjetiva_colaborador = Task(
+        config=tasks_config['analise_subjetiva_colaborador'],
+        agent=analista_de_perfis,
+        context=[],  # Recebe apenas dados da entrevista via interpolação
+        output_file='output/analise_perfil.md',
         async_execution=True
     )
 
-    report_overview = Task(
-        config=tasks_config['report_overview'],
-        agent=report_creator_agent,
-        output_file='output/performance_report.md',
+    recomendacao_conteudos = Task(
+        config=tasks_config['recomendacao_conteudos'],
+        agent=analista_conteudo_educacional,
+        context=[ler_planilha],
+        output_file='output/recomendacoes.md',
         async_execution=True
     )
 
-    prepare_pdi = Task(
+    planejamento_estruturado_de_desenvolvimento_individual = Task(
         config=tasks_config['planejamento_estruturado_de_desenvolvimento_individual'],
-        agent=pdi_specialist_agent,
-        context=[create_performance_report],
+        agent=pdi_specialist,
+        context=[analise_subjetiva_colaborador, recomendacao_conteudos],
         output_file='output/pdi.md',
     )
 
     generate_final_summary = Task(
         config=tasks_config['generate_final_summary'],
-        agent=final_writer_agent,
-        context=[create_performance_report, prepare_pdi, report_overview],
-        output_file='output/final_summary.md'
+        agent=final_writer,
+        context=[
+            analise_subjetiva_colaborador,
+            recomendacao_conteudos,
+            planejamento_estruturado_de_desenvolvimento_individual
+        ],
+        output_file='output/final_summary.md',
     )
 
     # Creating Crew
     crew = Crew(
         agents=[
-            report_creator_agent,
-            pdi_specialist_agent,
-            final_writer_agent
+            leitor_de_planilha,
+            analista_de_perfis,
+            analista_conteudo_educacional,
+            pdi_specialist,
+            final_writer
         ],
         tasks=[
-            create_performance_report,
-            report_overview,
-            prepare_pdi,
+            ler_planilha,
+            analise_subjetiva_colaborador,
+            recomendacao_conteudos,
+            planejamento_estruturado_de_desenvolvimento_individual,
             generate_final_summary
         ],
-        verbose=True,
-        process=Process.sequential
+        process=Process.sequential,
+        verbose=True
     )
 
     return crew
 
 async def main():
     # Load configurations
-    agents_config, tasks_config = load_config('config/agents.yaml', 'config/tasks.yaml')
+    config_dir = pathlib.Path(__file__).parent / 'config'
+    agents_config, tasks_config = load_config(config_dir / 'agents.yaml', config_dir / 'tasks.yaml')
 
     # Inicializa e executa a entrevista
     interview_manager = InterviewManager()
