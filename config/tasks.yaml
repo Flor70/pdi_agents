@@ -204,3 +204,57 @@ recomendacao_conteudos:
     3. Alinhamento estratégico:
        - Como os conteúdos selecionados contribuem para os objetivos de desenvolvimento
        - Resultados esperados após a conclusão dos conteúdos
+
+technical_skills_research:
+  description: >
+    Conduza uma pesquisa para identificar conteúdos relacionados às competências técnicas
+    específicas mencionadas durante a entrevista do colaborador. Inclua cursos online,
+    artigos técnicos, livros recomendados e blogs de especialistas.
+
+    ## Resumo da entrevista:
+
+    {interview_data}
+  expected_output: >
+    Uma lista de 10 conteúdos técnicos, incluindo títulos, autores e links, com uma
+    breve descrição sobre como esses recursos podem ajudar no desenvolvimento técnico
+    do colaborador.
+
+behavioral_skills_research:
+  description: >
+    Pesquise conteúdos relacionados às competências comportamentais e soft skills mencionadas
+    na entrevista, como liderança, comunicação, resolução de conflitos ou outras habilidades
+    interpessoais. Busque exemplos práticos, como estudos de caso ou workshops.
+
+    ## Resumo da entrevista:
+
+    {interview_data}
+  expected_output: >
+    Uma lista de 10 recursos focados em desenvolvimento comportamental, com links e descrições
+    sobre como os conteúdos se aplicam às necessidades do colaborador.
+
+industry_trends_and_inspiration_research:
+  description: >
+    Realize uma pesquisa sobre tendências emergentes na indústria do colaborador e materiais
+    inspiracionais que ajudem a alinhar seu desenvolvimento com as direções futuras do setor.
+    Inclua podcasts, artigos, vídeos de palestras e discussões em fóruns.
+
+    ## Resumo da entrevista:
+
+    {interview_data}
+  expected_output: >
+    Uma lista de 10 recursos que conectem o colaborador às tendências da indústria e insights
+    inspiradores, com explicações sobre sua relevância.
+
+aggregate_and_structure_research:
+  description: >
+    Analise os resultados das três pesquisas anteriores: competências técnicas,
+    competências comportamentais e tendências/inspiração da indústria. 
+    Selecione os melhores recursos de cada pesquisa com base em relevância, qualidade,
+    aplicabilidade e variedade. Estruture o conteúdo consolidado em uma lista 
+    organizada por categoria, pronta para ser utilizada no desenvolvimento do PDI.
+  expected_output: >
+    Um documento estruturado com:
+    - Categorias: Competências Técnicas, Competências Comportamentais, e Tendências/Inspiração.
+    - Para cada categoria, até 5 conteúdos selecionados com título, autor, link 
+      e uma breve justificativa da escolha.
+    - Formatação clara para facilitar o uso por agentes subsequentes.

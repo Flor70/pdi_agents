@@ -17,7 +17,9 @@ import asyncio
 from crewai import Agent, Task, Crew, Process
 from tools import CompleteInterviewTool
 from tools.educational_content_tool import ReadEducationalDBTool
+from tools.serper_search_tool import SerperSearchTool
 from interview_manager import InterviewManager
+from dotenv import load_dotenv
 
 # Set up base directory and file paths
 BASE_DIR = pathlib.Path(__file__).parent.absolute()
@@ -52,10 +54,13 @@ async def create_crew(agents_config, tasks_config, interview_data=None, openai_a
 
     # Initialize tools
     educational_db_tool = ReadEducationalDBTool()
+    serper_tool = SerperSearchTool()
     
     if interview_data:
         # Interpola os dados da entrevista nas descrições das tasks
-        for task_name in ['analise_subjetiva_colaborador', 'recomendacao_conteudos']:
+        for task_name in ['analise_subjetiva_colaborador', 'recomendacao_conteudos',
+                         'technical_skills_research', 'behavioral_skills_research',
+                         'industry_trends_and_inspiration_research']:
             if task_name in tasks_config:
                 tasks_config[task_name]['description'] = \
                     tasks_config[task_name]['description'].format(
@@ -98,6 +103,20 @@ async def create_crew(agents_config, tasks_config, interview_data=None, openai_a
         cache=True
     )
 
+    professional_development_researcher = Agent(
+        config=agents_config['professional_development_researcher'],
+        verbose=True,
+        tools=[serper_tool],
+        cache=True
+    )
+
+    content_organizer = Agent(
+        config=agents_config['content_organizer'],
+        verbose=True,
+        tools=[],
+        cache=True
+    )
+
     # Creating Tasks
     ler_planilha = Task(
         config=tasks_config['ler_planilha'],
@@ -120,10 +139,46 @@ async def create_crew(agents_config, tasks_config, interview_data=None, openai_a
         async_execution=True
     )
 
+    technical_skills_research = Task(
+        config=tasks_config['technical_skills_research'],
+        agent=professional_development_researcher,
+        output_file='output/technical_skills.md',
+        async_execution=True
+    )
+
+    behavioral_skills_research = Task(
+        config=tasks_config['behavioral_skills_research'],
+        agent=professional_development_researcher,
+        output_file='output/behavioral_skills.md',
+        async_execution=True
+    )
+
+    industry_trends_research = Task(
+        config=tasks_config['industry_trends_and_inspiration_research'],
+        agent=professional_development_researcher,
+        output_file='output/industry_trends.md',
+        async_execution=True
+    )
+
+    aggregate_and_structure_research = Task(
+        config=tasks_config['aggregate_and_structure_research'],
+        agent=content_organizer,
+        context=[
+            technical_skills_research, 
+            behavioral_skills_research, 
+            industry_trends_research
+            ],
+        output_file='output/aggregated_research.md',
+    )
+
     planejamento_estruturado_de_desenvolvimento_individual = Task(
         config=tasks_config['planejamento_estruturado_de_desenvolvimento_individual'],
         agent=pdi_specialist,
-        context=[analise_subjetiva_colaborador, recomendacao_conteudos],
+        context=[
+            analise_subjetiva_colaborador,
+            recomendacao_conteudos,
+            aggregate_and_structure_research
+        ],
         output_file='output/pdi.md',
     )
 
@@ -133,7 +188,8 @@ async def create_crew(agents_config, tasks_config, interview_data=None, openai_a
         context=[
             analise_subjetiva_colaborador,
             recomendacao_conteudos,
-            planejamento_estruturado_de_desenvolvimento_individual
+            planejamento_estruturado_de_desenvolvimento_individual,
+            aggregate_and_structure_research
         ],
         output_file='output/final_summary.md',
     )
@@ -144,6 +200,8 @@ async def create_crew(agents_config, tasks_config, interview_data=None, openai_a
             leitor_de_planilha,
             analista_de_perfis,
             analista_conteudo_educacional,
+            professional_development_researcher,
+            content_organizer,
             pdi_specialist,
             final_writer
         ],
@@ -151,17 +209,24 @@ async def create_crew(agents_config, tasks_config, interview_data=None, openai_a
             ler_planilha,
             analise_subjetiva_colaborador,
             recomendacao_conteudos,
+            technical_skills_research,
+            behavioral_skills_research,
+            industry_trends_research,
+            aggregate_and_structure_research,
             planejamento_estruturado_de_desenvolvimento_individual,
             generate_final_summary
         ],
-        process=Process.sequential,
-        verbose=True
+        verbose=True,
+        process=Process.sequential
     )
 
     return crew
 
 async def main():
     # Load configurations
+    load_dotenv()
+    os.environ["SERPER_API_KEY"] = os.getenv("SERPER_API_KEY")
+    
     config_dir = pathlib.Path(__file__).parent / 'config'
     agents_config, tasks_config = load_config(config_dir / 'agents.yaml', config_dir / 'tasks.yaml')
 
