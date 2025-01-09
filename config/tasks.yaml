@@ -230,7 +230,7 @@ behavioral_skills_research:
     {interview_data}
   expected_output: >
     Uma lista de 10 recursos focados em desenvolvimento comportamental, com links e descrições
-    sobre como os conteúdos se aplicam às necessidades do colaborador.
+    sobre como os conteúdos se aplicam às necessidades do colaborador. 
 
 industry_trends_and_inspiration_research:
   description: >
