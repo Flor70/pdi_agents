@@ -2,6 +2,7 @@
 import sqlite3
 import sys
 from pathlib import Path
+from pdi_assistant import PDIAssistant
 
 if sqlite3.sqlite_version_info < (3, 35, 0):
     __import__('pysqlite3')
@@ -41,6 +42,10 @@ if 'current_file' not in st.session_state:
     st.session_state.current_file = None
 if 'openai_api_key' not in st.session_state:
     st.session_state.openai_api_key = None
+if 'pdi_assistant' not in st.session_state:
+    st.session_state.pdi_assistant = None
+if 'chat_messages' not in st.session_state:
+    st.session_state.chat_messages = []
 
 def show_sidebar(generated_files):
     """Mostra a sidebar com navegação de documentos"""
@@ -83,6 +88,26 @@ def show_sidebar(generated_files):
         
         # Atualizar o estado da sessão
         st.session_state.current_file = str(selected_file)
+        
+        # Verificar se os documentos necessários para o chat estão disponíveis
+        required_files = ['aggregated_research.md', 'analise_perfil.md', 'pdi.md']
+        chat_files_available = all(
+            any(f.name == req_file for f in generated_files if f.exists())
+            for req_file in required_files
+        )
+        
+        # Adicionar botão de chat se os documentos necessários estiverem disponíveis
+        st.sidebar.markdown("---")
+        if chat_files_available:
+            if st.sidebar.button("💬 Consultar PDI", use_container_width=True):
+                st.session_state.current_page = 'chat'
+                if st.session_state.pdi_assistant is None:
+                    st.session_state.pdi_assistant = PDIAssistant(st.session_state.openai_api_key)
+                    st.session_state.pdi_assistant.initialize_assistant()
+                    st.session_state.pdi_assistant.upload_pdi_documents(OUTPUT_DIR)
+                    st.session_state.pdi_assistant.create_thread()
+        else:
+            st.sidebar.info("O chat estará disponível após a geração de todos os documentos necessários.")
     
     # Adicionar botão de nova entrevista na sidebar
     st.sidebar.markdown("---")
@@ -90,6 +115,9 @@ def show_sidebar(generated_files):
         st.session_state.messages = []
         st.session_state.interview_complete = False
         st.session_state.interview_data = None
+        st.session_state.pdi_assistant = None
+        st.session_state.chat_messages = []
+        st.session_state.current_page = 'main'
         st.rerun()
 
 def show_file_content():
@@ -236,6 +264,34 @@ def show_interview_interface():
             st.session_state.messages.append({"role": "assistant", "content": response_content})
             st.chat_message("assistant").write(response_content)
 
+def show_chat_interface():
+    """Interface do chat para consulta do PDI"""
+    st.title("💬 Consultor PDI")
+    st.markdown("""
+    Olá! Sou seu consultor especializado no Plano de Desenvolvimento Individual.
+    Posso responder perguntas sobre o perfil do colaborador, recomendações e plano de desenvolvimento.
+    Como posso ajudar?
+    """)
+    
+    # Display chat messages
+    for message in st.session_state.chat_messages:
+        with st.chat_message(message["role"]):
+            st.write(message["content"])
+    
+    # Chat input
+    if prompt := st.chat_input("Digite sua pergunta"):
+        # Add user message to chat history
+        st.session_state.chat_messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.write(prompt)
+        
+        # Get assistant response
+        with st.chat_message("assistant"):
+            with st.spinner("Pensando..."):
+                response = asyncio.run(st.session_state.pdi_assistant.get_response(prompt))
+                st.session_state.chat_messages.append({"role": "assistant", "content": response})
+                st.write(response)
+
 def show_main_page():
     """Página principal do aplicativo"""
     st.title("🎯 PDI Crew - Plano de Desenvolvimento Individual")
@@ -252,7 +308,7 @@ def show_main_page():
                 st.success("✅ API Key válida!")
                 st.rerun()
         st.stop()
-
+    
     if st.session_state.interview_complete:
         output_dir = BASE_DIR / 'output'
         generated_files = [
@@ -269,12 +325,16 @@ def show_main_page():
         # Mostrar a sidebar
         show_sidebar(generated_files)
         
-        # Se é a primeira vez após completar a entrevista, mostrar o sumário executivo
-        if 'current_file' not in st.session_state:
-            st.session_state.current_file = str(output_dir / 'final_summary.md')
-        
-        # Mostrar o conteúdo do arquivo atual
-        show_file_content()
+        # Mostrar a interface apropriada
+        if st.session_state.current_page == 'chat':
+            show_chat_interface()
+        else:
+            # Se é a primeira vez após completar a entrevista, mostrar o sumário executivo
+            if 'current_file' not in st.session_state:
+                st.session_state.current_file = str(output_dir / 'final_summary.md')
+            
+            # Mostrar o conteúdo do arquivo atual
+            show_file_content()
     else:
         # Initialize LLM and messages if not exists
         initialize_session_state()
