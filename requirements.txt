@@ -9,20 +9,15 @@ crewai[tools]
 pandas>=2.0.0
 numpy>=1.24.0
 
-# Vector store and embeddings
-pinecone-client>=4.0.0
-langchain-pinecone==0.1.2
-langchain-openai==0.1.23
-sentence-transformers==2.2.2
+# web searching
+exa-py
 
 # PDF and text processing
 pypdf>=3.0.0
 tiktoken>=0.5.0
 
-# SQLite dependency
-pysqlite3-binary>=0.5.2
-
 # Streamlit
 streamlit>=1.29.0
+
 # Visualization
 plotly>=5.18.0
