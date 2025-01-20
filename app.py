@@ -2,8 +2,7 @@
 import sqlite3
 import sys
 from pathlib import Path
-from pdi_assistant import PDIAssistant
-from interview_assistant import InterviewAssistant
+import pathlib
 
 if sqlite3.sqlite_version_info < (3, 35, 0):
     __import__('pysqlite3')
@@ -12,7 +11,9 @@ if sqlite3.sqlite_version_info < (3, 35, 0):
 import streamlit as st
 import streamlit.components.v1 as components
 import os
-import pathlib
+import asyncio
+from pdi_assistant import PDIAssistant
+from interview_assistant import InterviewAssistant
 from main import create_crew, load_config
 import asyncio
 from langchain_openai import ChatOpenAI 
