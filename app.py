@@ -3,6 +3,7 @@ import sqlite3
 import sys
 from pathlib import Path
 from pdi_assistant import PDIAssistant
+from interview_assistant import InterviewAssistant
 
 if sqlite3.sqlite_version_info < (3, 35, 0):
     __import__('pysqlite3')
@@ -44,110 +45,59 @@ if 'openai_api_key' not in st.session_state:
     st.session_state.openai_api_key = None
 if 'pdi_assistant' not in st.session_state:
     st.session_state.pdi_assistant = None
+if 'interview_assistant' not in st.session_state:
+    st.session_state.interview_assistant = None
 if 'chat_messages' not in st.session_state:
     st.session_state.chat_messages = []
 
 def show_sidebar(generated_files):
-    """Mostra a sidebar com navegação de documentos"""
-    st.sidebar.subheader("📚 Documentos Gerados")
-    
-    # Mapeamento de nomes de arquivos para títulos amigáveis
-    file_titles = {
-        'analise_perfil.md': 'Análise do Perfil',
-        'pdi.md': 'Plano de Desenvolvimento Individual',
-        'final_summary.md': 'Sumário Executivo',
-        'recomendacoes.md': 'Recomendações Educacionais',
-        'technical_skills.md': 'Pesquisa de Habilidades Técnicas',
-        'behavioral_skills.md': 'Pesquisa de Habilidades Comportamentais',
-        'industry_trends.md': 'Pesquisa de Tendências da Indústria',
-        'aggregated_research.md': 'Consolidação das Pesquisas'
-    }
-    
-    # Criar lista de documentos disponíveis
-    available_docs = []
-    for file in generated_files:
-        if file.exists():
-            try:
-                file_name = file.name
-                if file_name in file_titles:
-                    available_docs.append((file_titles[file_name], file))
-            except Exception as e:
-                st.error(f"Erro ao processar arquivo {file.name}: {str(e)}")
-    
-    if available_docs:
-        # Criar opções para o dropdown
-        doc_options = [title for title, _ in available_docs]
-        selected_doc = st.sidebar.selectbox(
-            "Escolha um documento para visualizar:",
-            doc_options,
-            key="doc_selector"
-        )
+    """Mostra a sidebar com os arquivos gerados"""
+    with st.sidebar:
+        st.title("🗂️ Navegação")
         
-        # Encontrar o arquivo correspondente
-        selected_file = next(file for title, file in available_docs if title == selected_doc)
+        # Botão para voltar ao guia
+        if st.button("📚 Guia do PDI"):
+            st.session_state.current_page = 'main'
+            st.session_state.current_file = str(BASE_DIR / 'docs' / 'pdi_guide.md')
+            st.rerun()
         
-        # Atualizar o estado da sessão
-        st.session_state.current_file = str(selected_file)
+        # Botão para chat
+        if st.button("💬 Consultor PDI Bot"):
+            st.session_state.current_page = 'chat'
+            st.rerun()
         
-        # Verificar se os documentos necessários para o chat estão disponíveis
-        required_files = ['aggregated_research.md', 'analise_perfil.md', 'pdi.md']
-        chat_files_available = all(
-            any(f.name == req_file for f in generated_files if f.exists())
-            for req_file in required_files
-        )
+        st.divider()
         
-        # Adicionar botão de chat se os documentos necessários estiverem disponíveis
-        st.sidebar.markdown("---")
-        if chat_files_available:
-            if st.sidebar.button("💬 Consultar PDI", use_container_width=True):
-                st.session_state.current_page = 'chat'
-                if st.session_state.pdi_assistant is None:
-                    st.session_state.pdi_assistant = PDIAssistant(st.session_state.openai_api_key)
-                    st.session_state.pdi_assistant.initialize_assistant()
-                    st.session_state.pdi_assistant.upload_pdi_documents(OUTPUT_DIR)
-                    st.session_state.pdi_assistant.create_thread()
-        else:
-            st.sidebar.info("O chat estará disponível após a geração de todos os documentos necessários.")
-    
-    # Adicionar botão de nova entrevista na sidebar
-    st.sidebar.markdown("---")
-    if st.sidebar.button("🔄 Nova Entrevista", use_container_width=True):
-        st.session_state.messages = []
-        st.session_state.interview_complete = False
-        st.session_state.interview_data = None
-        st.session_state.pdi_assistant = None
-        st.session_state.chat_messages = []
-        st.session_state.current_page = 'main'
-        st.rerun()
+        # Lista de documentos
+        st.subheader("📑 Documentos Gerados")
+        for file in generated_files:
+            if file.exists():
+                # Extrai o nome do arquivo sem a extensão
+                display_name = file.stem.replace('_', ' ').title()
+                
+                if st.button(f"📄 {display_name}"):
+                    st.session_state.current_file = str(file)
+                    st.session_state.current_page = 'main'
+                    st.rerun()
 
 def show_file_content():
     """Mostra o conteúdo do arquivo atual"""
     try:
-        # Mapeamento de nomes de arquivos para títulos
-        file_titles = {
-            'analise_perfil.md': 'Análise do Perfil',
-            'pdi.md': 'Plano de Desenvolvimento Individual',
-            'final_summary.md': 'Sumário Executivo',
-            'recomendacoes.md': 'Recomendações Educacionais',
-            'technical_skills.md': 'Pesquisa de Habilidades Técnicas',
-            'behavioral_skills.md': 'Pesquisa de Habilidades Comportamentais',
-            'industry_trends.md': 'Pesquisa de Tendências da Indústria',
-            'aggregated_research.md': 'Consolidação das Pesquisas'
-        }
-        
-        # Obter o nome do arquivo atual
-        current_file = Path(st.session_state.current_file).name
-        
-        # Mostrar o título do documento
-        if current_file in file_titles:
-            st.title(f"📄 {file_titles[current_file]}")
-        
-        # Mostrar o conteúdo
-        with open(st.session_state.current_file, 'r', encoding='utf-8') as f:
+        if 'current_file' not in st.session_state or st.session_state.current_file is None:
+            st.session_state.current_file = str(BASE_DIR / 'docs' / 'pdi_guide.md')
+            
+        file_path = st.session_state.current_file
+        if not os.path.exists(file_path):
+            st.error(f"Arquivo não encontrado: {file_path}")
+            return
+            
+        with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
-            st.markdown(content, unsafe_allow_html=True)
+            st.markdown(content)
     except Exception as e:
         st.error(f"Erro ao ler o arquivo: {str(e)}")
+        st.session_state.current_file = str(BASE_DIR / 'docs' / 'pdi_guide.md')
+        st.rerun()
 
 def verify_api_key(api_key):
     """Verifica se a chave da API OpenAI é válida"""
@@ -169,128 +119,86 @@ def initialize_llm():
     )
 
 def initialize_session_state():
-    if 'llm' not in st.session_state:
-        st.session_state.llm = initialize_llm()
-        st.session_state.llm_messages = []
-        system_prompt = """
-        Você é um consultor profissional especializado em desenvolvimento de carreira e aprendizagem.
-        Seu objetivo é conduzir uma entrevista natural e empática para coletar informações sobre um colaborador.
-        Na condução de sua entrevista você deverá fazer perguntas curtas e claras até que tenha coletado 
-        informações detalhadas sobre:
+    """Inicializa o estado da sessão para a entrevista"""
+    if 'interview_assistant' not in st.session_state or st.session_state.interview_assistant is None:
+        st.session_state.interview_assistant = InterviewAssistant(st.session_state.openai_api_key)
+        st.session_state.interview_assistant.initialize_assistant()
+        st.session_state.messages = st.session_state.interview_assistant.messages
 
-        1. Perfil Profissional:
-        - Área de atuação atual e tempo de experiência
-        - Principais responsabilidades e atividades diárias
-        - Nível de senioridade e escopo de atuação
-
-        2. Performance e Resultados:
-        - Métricas quantitativas de performance (KPIs, metas atingidas, etc.)
-        - Projetos relevantes concluídos ou em andamento
-        - Impacto do seu trabalho na organização
-
-        3. Desenvolvimento Profissional:
-        - Desafios técnicos e não-técnicos enfrentados no dia a dia
-        - Pontos fortes e competências já bem desenvolvidas
-        - Áreas que gostaria de melhorar ou desenvolver
-        - Preferências de formato de aprendizagem (cursos, leitura, vídeos, etc.)
-        - Disponibilidade de tempo para estudos
-
-        4. Aspirações e Objetivos:
-        - Objetivos profissionais de curto prazo (6-12 meses)
-        - Objetivos de carreira de longo prazo
-        - Áreas de interesse para especialização
-        - Habilidades que gostaria de adquirir ou aprimorar
-
-        Conduza a entrevista de forma conversacional, fazendo perguntas de follow-up quando necessário 
-        para obter informações mais específicas e detalhadas. NUNCA faça perguntas muito longas. 
-        Tente, quando possível, fazer algum comentário curto e empático sobre a última resposta do entrevistado antes de fazer a pergunta seguinte 
-        de modo a garantir uma conversa fluida e natural.
-
-        IMPORTANTE:
-
-        Quando você tiver coletado todas as informações necessárias, responda com o prefixo 
-        [INTERVIEW_COMPLETE] seguido por um resumo estruturado das informações coletadas.
-
-        Se o usuário responder [finalize] você deverá inventar a entrevista e responde com o prefixo [INTERVIEW_COMPLETE] 
-
-        O resumo deve ser em formato de texto, organizado pelos tópicos acima, incluindo citações 
-        relevantes das respostas do entrevistado e destacando pontos importantes para a 
-        criação de um plano de desenvolvimento personalizado.
-        """
-        # Initialize messages with system prompt
-        st.session_state.llm_messages = [{"role": "system", "content": system_prompt}]
-        # Add initial message for display
-        st.session_state.messages = [{"role": "assistant", "content": "Olá! Sou seu consultor de desenvolvimento profissional. Vou fazer algumas perguntas para entender melhor seu perfil e objetivos. Poderia me contar um pouco sobre sua função atual e responsabilidades?"}]
-
-def show_interview_interface():
-    # Display chat messages
-    for msg in st.session_state.messages:
-        st.chat_message(msg["role"]).write(msg["content"])
-
-    # Chat input
-    if prompt := st.chat_input():
-        # Add user message to chat history and LLM messages
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        st.session_state.llm_messages.append({"role": "user", "content": prompt})
-        st.chat_message("user").write(prompt)
-
-        # Get response from LLM
-        response = asyncio.run(st.session_state.llm.ainvoke(st.session_state.llm_messages))
-        response_content = response.content
+def show_generic_chat_interface(title, description, assistant, messages_key="chat_messages"):
+    """Interface genérica de chat que pode ser usada com diferentes assistentes"""
+    # Verifica se o assistente está inicializado
+    if assistant is None:
+        st.error("Erro: Assistente não inicializado corretamente")
+        return
         
-        # Check if interview is complete
-        if "[INTERVIEW_COMPLETE]" in response_content:
-            # Extrai apenas a última mensagem do assistente, sem o marcador e o resumo
-            last_message = response_content.split("[INTERVIEW_COMPLETE]")[0].strip()
-            
-            # Armazena os dados da entrevista e marca como completa
-            st.session_state.interview_complete = True
-            st.session_state.interview_data = response_content.split("[INTERVIEW_COMPLETE]")[1].strip()
-            
-            # Mostra apenas uma mensagem de conclusão
-            st.chat_message("assistant").write("Obrigado pelas informações! Vou gerar sua análise de desenvolvimento profissional.")
-            
-            # Carrega configurações e executa a crew em segundo plano
-            with st.spinner("Aguarde, estamos realizando o seu plano de desenvolvimento..."):
-                agents_config, tasks_config = load_config(AGENTS_CONFIG, TASKS_CONFIG)
-                crew = asyncio.run(create_crew(agents_config, tasks_config, st.session_state.interview_data, openai_api_key=st.session_state.openai_api_key))
-                result = crew.kickoff()
-            
-            # Redireciona para a página principal
-            st.session_state.current_page = 'main'
-            st.rerun()
-        else:
-            # Adiciona resposta normal do assistente
-            st.session_state.messages.append({"role": "assistant", "content": response_content})
-            st.chat_message("assistant").write(response_content)
-
-def show_chat_interface():
-    """Interface do chat para consulta do PDI"""
-    st.title("💬 Consultor PDI")
-    st.markdown("""
-    Olá! Sou seu consultor especializado no Plano de Desenvolvimento Individual.
-    Posso responder perguntas sobre o perfil do colaborador, recomendações e plano de desenvolvimento.
-    Como posso ajudar?
-    """)
+    st.title(title)
+    st.markdown(description)
+    
+    # Inicializa mensagens se necessário
+    if messages_key not in st.session_state:
+        st.session_state[messages_key] = []
     
     # Display chat messages
-    for message in st.session_state.chat_messages:
+    for message in st.session_state[messages_key]:
         with st.chat_message(message["role"]):
             st.write(message["content"])
     
     # Chat input
-    if prompt := st.chat_input("Digite sua pergunta"):
+    if prompt := st.chat_input("Digite sua mensagem"):
         # Add user message to chat history
-        st.session_state.chat_messages.append({"role": "user", "content": prompt})
+        st.session_state[messages_key].append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.write(prompt)
         
         # Get assistant response
         with st.chat_message("assistant"):
             with st.spinner("Pensando..."):
-                response = asyncio.run(st.session_state.pdi_assistant.get_response(prompt))
-                st.session_state.chat_messages.append({"role": "assistant", "content": response})
-                st.write(response)
+                response = asyncio.run(assistant.get_response(prompt))
+                
+                # Verifica se é uma resposta de conclusão de entrevista
+                if isinstance(response, str) and "[INTERVIEW_COMPLETE]" in response:
+                    st.session_state.interview_complete = True
+                    st.session_state.interview_data = response.split("[INTERVIEW_COMPLETE]")[1].strip()
+                    
+                    # Carrega configurações e executa a crew em segundo plano
+                    with st.spinner("Aguarde, estamos realizando o seu plano de desenvolvimento..."):
+                        agents_config, tasks_config = load_config(AGENTS_CONFIG, TASKS_CONFIG)
+                        crew = asyncio.run(create_crew(agents_config, tasks_config, st.session_state.interview_data, openai_api_key=st.session_state.openai_api_key))
+                        result = crew.kickoff()
+                    
+                    st.session_state.current_page = 'main'
+                    st.session_state.current_file = str(BASE_DIR / 'docs' / 'pdi_guide.md')
+                    st.rerun()
+                else:
+                    st.session_state[messages_key].append({"role": "assistant", "content": response})
+                    st.write(response)
+
+def show_interview_interface():
+    """Interface do chat para entrevista"""
+    show_generic_chat_interface(
+        title="🎤 Entrevista PDI",
+        description="""
+        Olá! Sou seu consultor especializado em desenvolvimento profissional.
+        Vou fazer algumas perguntas para entender melhor seu perfil e objetivos.
+        Vamos começar?
+        """,
+        assistant=st.session_state.interview_assistant,
+        messages_key="messages"
+    )
+
+def show_chat_interface():
+    """Interface do chat para consulta do PDI"""
+    show_generic_chat_interface(
+        title="💬 Consultor PDI Bot",
+        description="""
+        Olá! Sou seu consultor especializado no Plano de Desenvolvimento Individual.
+        Posso responder perguntas sobre o perfil do colaborador, recomendações e plano de desenvolvimento.
+        Como posso ajudar?
+        """,
+        assistant=st.session_state.pdi_assistant,
+        messages_key="chat_messages"
+    )
 
 def show_main_page():
     """Página principal do aplicativo"""
@@ -305,9 +213,15 @@ def show_main_page():
             if verify_api_key(api_key):
                 st.session_state.openai_api_key = api_key
                 os.environ["OPENAI_API_KEY"] = api_key
+                initialize_session_state()
                 st.success("✅ API Key válida!")
                 st.rerun()
         st.stop()
+    
+    # Garante que o assistente está inicializado
+    if 'interview_assistant' not in st.session_state or st.session_state.interview_assistant is None:
+        initialize_session_state()
+        st.rerun()
     
     if st.session_state.interview_complete:
         output_dir = BASE_DIR / 'output'
@@ -325,13 +239,23 @@ def show_main_page():
         # Mostrar a sidebar
         show_sidebar(generated_files)
         
+        # Inicializa o PDI Assistant se necessário
+        if st.session_state.current_page == 'chat' and (
+            'pdi_assistant' not in st.session_state or 
+            st.session_state.pdi_assistant is None
+        ):
+            st.session_state.pdi_assistant = PDIAssistant(st.session_state.openai_api_key)
+            st.session_state.pdi_assistant.initialize_assistant()
+            st.session_state.pdi_assistant.upload_pdi_documents(output_dir)
+            st.session_state.pdi_assistant.create_thread()
+        
         # Mostrar a interface apropriada
         if st.session_state.current_page == 'chat':
             show_chat_interface()
         else:
-            # Se é a primeira vez após completar a entrevista, mostrar o sumário executivo
+            # Se é a primeira vez após completar a entrevista, mostrar o guia
             if 'current_file' not in st.session_state:
-                st.session_state.current_file = str(output_dir / 'final_summary.md')
+                st.session_state.current_file = str(BASE_DIR / 'docs' / 'pdi_guide.md')
             
             # Mostrar o conteúdo do arquivo atual
             show_file_content()
