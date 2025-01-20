@@ -50,6 +50,18 @@ if 'interview_assistant' not in st.session_state:
 if 'chat_messages' not in st.session_state:
     st.session_state.chat_messages = []
 
+# Mapeamento de nomes de arquivos para títulos em português
+FILE_TITLES = {
+    'final_summary.md': 'Resumo Executivo',
+    'pdi.md': 'Plano de Desenvolvimento',
+    'analise_perfil.md': 'Análise do Perfil',
+    'recomendacoes.md': 'Recomendações de Estudo',
+    'technical_skills.md': 'Competências Técnicas',
+    'behavioral_skills.md': 'Competências Comportamentais',
+    'industry_trends.md': 'Tendências do Mercado',
+    'aggregated_research.md': 'Pesquisa Consolidada'
+}
+
 def show_sidebar(generated_files):
     """Mostra a sidebar com os arquivos gerados"""
     with st.sidebar:
@@ -72,8 +84,9 @@ def show_sidebar(generated_files):
         st.subheader("📑 Documentos Gerados")
         for file in generated_files:
             if file.exists():
-                # Extrai o nome do arquivo sem a extensão
-                display_name = file.stem.replace('_', ' ').title()
+                # Obtém o nome do arquivo e seu título correspondente
+                file_name = file.name
+                display_name = FILE_TITLES.get(file_name, file_name)
                 
                 if st.button(f"📄 {display_name}"):
                     st.session_state.current_file = str(file)
@@ -153,35 +166,28 @@ def show_generic_chat_interface(title, description, assistant, messages_key="cha
         
         # Get assistant response
         with st.chat_message("assistant"):
-            with st.spinner("Pensando..."):
+            # Verifica se não está em processo de criação do PDI
+            if not (hasattr(assistant, 'process_interview_completion') and "[INTERVIEW_COMPLETE]" in prompt):
+                with st.spinner("Pensando..."):
+                    response = asyncio.run(assistant.get_response(prompt))
+            else:
                 response = asyncio.run(assistant.get_response(prompt))
-                
-                # Verifica se é uma resposta de conclusão de entrevista
-                if isinstance(response, str) and "[INTERVIEW_COMPLETE]" in response:
-                    st.session_state.interview_complete = True
-                    st.session_state.interview_data = response.split("[INTERVIEW_COMPLETE]")[1].strip()
-                    
-                    # Carrega configurações e executa a crew em segundo plano
-                    with st.spinner("Aguarde, estamos realizando o seu plano de desenvolvimento..."):
-                        agents_config, tasks_config = load_config(AGENTS_CONFIG, TASKS_CONFIG)
-                        crew = asyncio.run(create_crew(agents_config, tasks_config, st.session_state.interview_data, openai_api_key=st.session_state.openai_api_key))
-                        result = crew.kickoff()
-                    
-                    st.session_state.current_page = 'main'
-                    st.session_state.current_file = str(BASE_DIR / 'docs' / 'pdi_guide.md')
+            
+            # Verifica se é uma resposta de conclusão de entrevista
+            if hasattr(assistant, 'process_interview_completion'):
+                if assistant.process_interview_completion(response, st.session_state):
                     st.rerun()
-                else:
-                    st.session_state[messages_key].append({"role": "assistant", "content": response})
-                    st.write(response)
+            
+            st.session_state[messages_key].append({"role": "assistant", "content": response})
+            st.write(response)
 
 def show_interview_interface():
     """Interface do chat para entrevista"""
     show_generic_chat_interface(
         title="🎤 Entrevista PDI",
         description="""
-        Olá! Sou seu consultor especializado em desenvolvimento profissional.
-        Vou fazer algumas perguntas para entender melhor seu perfil e objetivos.
-        Vamos começar?
+        A seguir vamos começar uma entrevista para conhecer melhor o seu perfil.
+        Por favor, responda as perguntas do nosso assistente para que possamos construir um PDI personalizado para você.
         """,
         assistant=st.session_state.interview_assistant,
         messages_key="messages"
@@ -202,7 +208,7 @@ def show_chat_interface():
 
 def show_main_page():
     """Página principal do aplicativo"""
-    st.title("🎯 PDI Crew - Plano de Desenvolvimento Individual")
+    st.title("✨ Templo PDI Bot")
     st.divider()
     
     # API Key input if not already set
@@ -225,16 +231,7 @@ def show_main_page():
     
     if st.session_state.interview_complete:
         output_dir = BASE_DIR / 'output'
-        generated_files = [
-            output_dir / 'final_summary.md',  # Sumário Executivo
-            output_dir / 'pdi.md',  # Plano de Desenvolvimento Individual
-            output_dir / 'analise_perfil.md',  # Análise do Perfil
-            output_dir / 'recomendacoes.md',  # Recomendações Educacionais
-            output_dir / 'technical_skills.md',  # Pesquisa de Habilidades Técnicas
-            output_dir / 'behavioral_skills.md',  # Pesquisa de Habilidades Comportamentais
-            output_dir / 'industry_trends.md',  # Pesquisa de Tendências da Indústria
-            output_dir / 'aggregated_research.md'  # Consolidação das Pesquisas
-        ]
+        generated_files = [output_dir / filename for filename in FILE_TITLES.keys()]
         
         # Mostrar a sidebar
         show_sidebar(generated_files)

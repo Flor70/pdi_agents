@@ -1,4 +1,8 @@
 from openai import OpenAI
+from utils import load_config, create_crew
+from pathlib import Path
+import asyncio
+import streamlit as st
 
 class InterviewAssistant:
     def __init__(self, openai_api_key):
@@ -63,7 +67,7 @@ class InterviewAssistant:
         # Mensagem inicial
         self.messages = [{
             "role": "assistant",
-            "content": "Olá! Sou seu consultor de desenvolvimento profissional. Vou fazer algumas perguntas para entender melhor seu perfil e objetivos. Poderia me contar um pouco sobre sua função atual e responsabilidades?"
+            "content": "Olá! Sou seu consultor de desenvolvimento profissional. Vou fazer algumas perguntas para entender melhor seu perfil e objetivos. Primeiro, poderia me contar qual o seu nome e empresa que você trabalha?"
         }]
         
     async def get_response(self, user_message):
@@ -103,3 +107,25 @@ class InterviewAssistant:
                 return response
                 
         return "Não foi possível gerar uma resposta."
+
+    def process_interview_completion(self, response, session_state):
+        """Processa a conclusão da entrevista e inicia a crew"""
+        if isinstance(response, str) and "[INTERVIEW_COMPLETE]" in response:
+            session_state.interview_complete = True
+            session_state.interview_data = response.split("[INTERVIEW_COMPLETE]")[1].strip()
+            
+            # Inicializa e executa a crew
+            with st.spinner("🚀 Iniciando a criação do seu PDI personalizado... \n\n" + 
+                          "Este processo envolve várias etapas de análise e pode levar alguns minutos. " +
+                          "Estamos trabalhando para criar um plano detalhado e sob medida para você! 😊"):
+                agents_config = Path(__file__).parent / 'config' / 'agents.yaml'
+                tasks_config = Path(__file__).parent / 'config' / 'tasks.yaml'
+                agents_config, tasks_config = load_config(agents_config, tasks_config)
+                crew = asyncio.run(create_crew(agents_config, tasks_config, session_state.interview_data, openai_api_key=session_state.openai_api_key))
+                result = crew.kickoff()
+            
+            session_state.current_page = 'main'
+            session_state.current_file = str(Path(__file__).parent / 'docs' / 'pdi_guide.md')
+            return True
+            
+        return False

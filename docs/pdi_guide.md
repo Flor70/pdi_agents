@@ -4,42 +4,42 @@ Parabéns! Nossos agentes especializados acabaram de criar seu Plano de Desenvol
 
 ## 📚 Documentos Disponíveis
 
-### 1. 📋 Sumário Executivo (`final_summary.md`)
+### 1. 📋 Resumo Executivo 
 - Visão geral concisa do seu perfil
 - Principais pontos de desenvolvimento identificados
 - Recomendações prioritárias
 
-### 2. 🎯 Plano de Desenvolvimento (`pdi.md`)
+### 2. 🎯 Plano de Desenvolvimento 
 - Objetivos específicos de desenvolvimento
 - Cronograma sugerido
 - Métricas de sucesso
 
-### 3. 🔍 Análise do Perfil (`analise_perfil.md`)
+### 3. 🔍 Análise do Perfil 
 - Avaliação detalhada das suas competências
 - Pontos fortes identificados
 - Áreas de oportunidade
 
-### 4. 📖 Recomendações Educacionais (`recomendacoes.md`)
+### 4. 📖 Recomendações Educacionais 
 - Recursos de aprendizagem sugeridos
 - Cursos recomendados
 - Material complementar
 
-### 5. 💻 Habilidades Técnicas (`technical_skills.md`)
+### 5. 💻 Competências Técnicas 
 - Análise das competências técnicas
 - Tendências tecnológicas relevantes
 - Caminhos de desenvolvimento técnico
 
-### 6. 🤝 Habilidades Comportamentais (`behavioral_skills.md`)
+### 6. 🤝 Competências Comportamentais 
 - Avaliação de soft skills
 - Competências interpessoais
 - Sugestões de desenvolvimento comportamental
 
-### 7. 📈 Tendências da Indústria (`industry_trends.md`)
+### 7. 📈 Tendências do Mercado 
 - Panorama do mercado
 - Tendências relevantes para sua área
 - Oportunidades futuras
 
-### 8. 📊 Pesquisa Consolidada (`aggregated_research.md`)
+### 8. 📊 Pesquisa Consolidada 
 - Compilação completa das pesquisas
 - Dados e referências
 - Insights adicionais
@@ -47,7 +47,7 @@ Parabéns! Nossos agentes especializados acabaram de criar seu Plano de Desenvol
 ## 🚀 Como Navegar
 
 1. Use a barra lateral (sidebar) para alternar entre os diferentes documentos
-2. Clique no botão "💬 Consultar PDI" para fazer perguntas sobre qualquer aspecto do seu plano
+2. Clique no botão "💬 Consultor PDI Bot" para fazer perguntas sobre qualquer aspecto do seu plano
 3. Explore cada documento na ordem sugerida acima para uma compreensão completa
 
 ## 💡 Dica

@@ -31,6 +31,8 @@ analise_subjetiva_colaborador:
     • Identificar oportunidades de crescimento
     • Avaliar barreiras potenciais para o desenvolvimento
 
+    Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você" , ou pelo seu própio nome, em suas respostas.
+
   expected_output: >
     Um relatório analítico detalhado contendo:
 
@@ -74,6 +76,8 @@ report_overview:
     3. Crie recomendações personalizadas para desenvolvimento profissional
     4. Sugira próximos passos concretos alinhados com os objetivos do profissional
 
+    Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você" , ou pelo seu própio nome, em suas respostas.
+
   expected_output: > 
     IMPORTANTE: A formatação em markdown não precisa ser indicada, já temos um interpretador de markdown pronto. Não comece o seu resultado com '```markdown' ou algo do tipo pois isso prejudica nossa ferramenta.
 
@@ -116,7 +120,9 @@ planejamento_estruturado_de_desenvolvimento_individual:
     • Inclua descrições claras e objetivas das atividades
     • Forneça orientações práticas para execução
 
-  expected_output: >
+    Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você" , ou pelo seu própio nome, em suas respostas.
+
+  expected_output: > 
     IMPORTANTE: A formatação em markdown não precisa ser indicada, já temos um interpretador de markdown pronto. Não comece o seu resultado com '```markdown' ou algo do tipo pois isso prejudica nossa ferramenta.
 
     Um Plano de Desenvolvimento Individual (PDI) completo contendo:
@@ -149,7 +155,9 @@ ler_planilha:
   description: >
     Utilize a tool 'read_educational_db' para ler e retornar o conteúdo completo 
     da planilha de conteúdos educacionais disponíveis.
-  expected_output: >
+    Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você" , ou pelo seu própio nome, em suas respostas.
+
+  expected_output: > 
     Uma lista estruturada de todos os conteúdos educacionais disponíveis, incluindo 
     nome, tipo, área do conhecimento, nível e descrição de cada item.
 
@@ -161,8 +169,9 @@ generate_final_summary:
     objetivos principais e cronograma. O objetivo é apresentar uma visão geral clara e objetiva 
     em uma página, facilitando o entendimento rápido do plano de desenvolvimento e direcionando o 
     colaborador para os documentos mais detalhados.
+    Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você" em suas respostas.
 
-  expected_output: >
+  expected_output: > 
     IMPORTANTE: A formatação em markdown não precisa ser indicada, já temos um interpretador de markdown pronto. Não comece o seu resultado com '```markdown' ou algo do tipo pois isso prejudica nossa ferramenta.
 
     Um sumário executivo em markdown que sintetize as principais informações 
@@ -184,8 +193,9 @@ recomendacao_conteudos:
     2. Relacionar o conteúdo com as necessidades, objetivos ou gaps identificados na entrevista
     3. Sugerir uma ordem de prioridade para consumo dos conteúdos
     4. Indicar como o conteúdo se alinha com os objetivos de desenvolvimento do colaborador
-  
-  expected_output: >
+    Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você", ou pelo seu própio nome, em suas respostas.
+
+  expected_output: > 
     IMPORTANTE: A formatação em markdown não precisa ser indicada, já temos um interpretador de markdown pronto. Não comece o seu resultado com '```markdown' ou algo do tipo pois isso prejudica nossa ferramenta.
 
     Um relatório detalhado contendo:
@@ -209,28 +219,32 @@ technical_skills_research:
   description: >
     Conduza uma pesquisa para identificar conteúdos relacionados às competências técnicas
     específicas mencionadas durante a entrevista do colaborador. Inclua cursos online,
-    artigos técnicos, livros recomendados e blogs de especialistas.
+    artigos técnicos, livros recomendados e blogs de especialistas, vídeos do youtube.
 
     ## Resumo da entrevista:
 
     {interview_data}
-  expected_output: >
-    Uma lista de 10 conteúdos técnicos, incluindo títulos, autores e links, com uma
+    Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você", ou pelo seu própio nome, em suas respostas.
+
+  expected_output: > 
+    Uma lista de 10 conteúdos técnicos, incluindo títulos, autores, tipo de conteúdo e links, com uma
     breve descrição sobre como esses recursos podem ajudar no desenvolvimento técnico
     do colaborador.
 
 behavioral_skills_research:
   description: >
-    Pesquise conteúdos relacionados às competências comportamentais e soft skills mencionadas
+    Pesquise por conteúdos relacionados às competências comportamentais e soft skills mencionadas
     na entrevista, como liderança, comunicação, resolução de conflitos ou outras habilidades
     interpessoais. Busque exemplos práticos, como estudos de caso ou workshops.
 
     ## Resumo da entrevista:
 
     {interview_data}
-  expected_output: >
-    Uma lista de 10 recursos focados em desenvolvimento comportamental, com links e descrições
-    sobre como os conteúdos se aplicam às necessidades do colaborador. 
+    Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você", ou pelo seu própio nome, em suas respostas.
+
+  expected_output: > 
+    Uma lista de 10 recursos focados em desenvolvimento comportamental, com links, descrições dos links, autores, tipo de conteúdo e
+    um parágrafo sobre como os conteúdos se aplicam às necessidades do colaborador. 
 
 industry_trends_and_inspiration_research:
   description: >
@@ -241,9 +255,11 @@ industry_trends_and_inspiration_research:
     ## Resumo da entrevista:
 
     {interview_data}
-  expected_output: >
+    Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você" , ou pelo seu própio nome,em suas respostas.
+
+  expected_output: > 
     Uma lista de 10 recursos que conectem o colaborador às tendências da indústria e insights
-    inspiradores, com explicações sobre sua relevância.
+    inspiradores, com explicações sobre sua relevância para o desenvolvimento do colaborador, links, descrições dos links, autores e tipo de conteúdo.
 
 aggregate_and_structure_research:
   description: >
@@ -252,9 +268,37 @@ aggregate_and_structure_research:
     Selecione os melhores recursos de cada pesquisa com base em relevância, qualidade,
     aplicabilidade e variedade. Estruture o conteúdo consolidado em uma lista 
     organizada por categoria, pronta para ser utilizada no desenvolvimento do PDI.
-  expected_output: >
+    Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você", ou pelo seu própio nome, em suas respostas.
+
+  expected_output: > 
     Um documento estruturado com:
     - Categorias: Competências Técnicas, Competências Comportamentais, e Tendências/Inspiração.
     - Para cada categoria, até 5 conteúdos selecionados com título, autor, link 
       e uma breve justificativa da escolha.
     - Formatação clara para facilitar o uso por agentes subsequentes.
+
+research_quality_evaluation:
+  description: >
+    Analise criticamente os resultados das três pesquisas realizadas (técnica, comportamental e tendências)
+    e avalie sua adequação às necessidades do colaborador.
+    
+    Contexto da entrevista do colaborador:
+    {interview_data}
+    
+    Para cada tipo de pesquisa, avalie:
+    1. Relevância dos conteúdos encontrados
+    2. Adequação ao nível de experiência do colaborador
+    3. Alinhamento com os objetivos de desenvolvimento
+    4. Qualidade e credibilidade das fontes
+    5. Variedade dos formatos de conteúdo
+    
+    Forneça uma avaliação detalhada para cada tipo de pesquisa e recomendações de melhorias 
+    quando necessário.
+    Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você", ou pelo seu própio nome, em suas respostas.
+
+  expected_output: > 
+    Um relatório de avaliação estruturado contendo:
+    - Análise individual de cada tipo de pesquisa
+    - Pontos fortes e pontos de melhoria
+    - Recomendações específicas para aprimoramento
+    - Avaliação geral da adequação dos conteúdos
