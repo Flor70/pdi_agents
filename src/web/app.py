@@ -7,9 +7,11 @@ from pathlib import Path
 import sqlite3
 
 # SQLite3 version fix for Streamlit Cloud
-if sqlite3.sqlite_version_info < (3, 35, 0):
-    __import__('pysqlite3')
-    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+try:
+    import pysqlite3
+    sys.modules['sqlite3'] = pysqlite3
+except ImportError:
+    pass
 
 # Configurar caminhos
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
