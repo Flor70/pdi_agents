@@ -120,6 +120,8 @@ planejamento_estruturado_de_desenvolvimento_individual:
     • Inclua descrições claras e objetivas das atividades
     • Forneça orientações práticas para execução
 
+    Para você criar o plano de desenvolvimento individual, você deve utilizar exclusivamente as informações fornecidas na análise do perfil do colaborador e nas recomendações de conteúdo fornecidas
+
     Importante: Use sempre linguagem direta e pessoal, tratando o colaborador como "você" , ou pelo seu própio nome, em suas respostas.
 
   expected_output: > 
@@ -135,7 +137,7 @@ planejamento_estruturado_de_desenvolvimento_individual:
     2. Plano Estruturado (em formato tabular markdown):
     • Divisão por trimestres e meses
     • Para cada período:
-      - Conteúdos e atividades programadas
+      - Conteúdos e atividades programadas com os links para os respectivos materiais quando aplicável
       - Objetivos específicos de aprendizagem
       - Resultados esperados
       - Recursos necessários
@@ -150,6 +152,14 @@ planejamento_estruturado_de_desenvolvimento_individual:
     • Recomendações práticas para gestão do tempo
     • Estratégias para maximizar o aprendizado
     • Dicas para superar possíveis obstáculos
+
+  agent: pdi_specialist
+
+  context: [
+    "analise_subjetiva_colaborador",
+    "recomendacao_conteudos",
+    "aggregate_and_structure_research"
+  ]
 
 ler_planilha:
   description: >
@@ -302,3 +312,62 @@ research_quality_evaluation:
     - Pontos fortes e pontos de melhoria
     - Recomendações específicas para aprimoramento
     - Avaliação geral da adequação dos conteúdos
+
+gerar_visualizacao_pdi:
+  description: >
+    Com base no PDI estruturado anteriormente gerado, criar uma estrutura JSON 
+    que represente todas as atividades e seus relacionamentos para visualização.
+
+    IMPORTANTE:
+    1. Extrair do documento PDI:
+       - Todas as atividades educacionais
+       - Links e recursos associados
+       - Organização trimestral
+       - Pré-requisitos entre atividades
+
+    2. Garantir que:
+       - Todos os links sejam mantidos exatamente como estão no PDI
+       - A organização trimestral seja preservada
+       - Os pré-requisitos sejam corretamente mapeados
+       - As datas de início/fim sejam convertidas para o formato correto
+
+    3. Validar:
+       - Todos os IDs sejam únicos
+       - Todos os links estejam presentes
+       - Todas as atividades tenham um trimestre definido
+
+  expected_output: >
+    Um arquivo JSON em output/pdi.json seguindo o modelo PDIConfig:
+    {
+      "titulo": "Plano de Desenvolvimento Individual",
+      "subtitulo": "string, opcional",
+      "colaborador": "string",
+      "periodo": "2024",
+      "atividades": [
+        {
+          "id": "string único",
+          "titulo": "string",
+          "descricao": "string",
+          "trimestre": "inteiro de 1 a 4",
+          "tipo": "enum: curso, mentoria, projeto, workshop, leitura, outro",
+          "link": "URL do PDI",
+          "plataforma": "string",
+          "data_inicio": "datetime, opcional",
+          "data_fim": "datetime, opcional",
+          "tags": ["string", "string", ...], // opcional
+          "prerequisitos": ["id_atividade1", "id_atividade2", ...] // opcional
+        }
+      ]
+    }
+
+    IMPORTANTE: 
+    - O JSON deve ser válido e seguir exatamente a estrutura do modelo PDIConfig
+    - Manter todos os links exatamente como estão no PDI
+    - Os IDs das atividades devem ser únicos
+    - As datas devem estar em formato ISO 8601
+
+  agent: pdi_specialist
+
+  context: [
+    "planejamento_estruturado_de_desenvolvimento_individual"
+  ]

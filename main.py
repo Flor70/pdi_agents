@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
 
+# Add src to PYTHONPATH
+import os
+import sys
+from pathlib import Path
+src_path = str(Path(__file__).parent / "src")
+if src_path not in sys.path:
+    sys.path.append(src_path)
+
 # Warning control
 import warnings
 warnings.filterwarnings('ignore')
 
-import os
 import pathlib
 import asyncio
 from dotenv import load_dotenv
-from interview_assistant import InterviewAssistant
-from utils import load_config, create_crew
+from assistants.interview_assistant import InterviewAssistant
+from core.utils import load_config, create_crew
 
 # Set up base directory and file paths
 BASE_DIR = pathlib.Path(__file__).parent.absolute()
