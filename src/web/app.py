@@ -4,6 +4,12 @@
 import os
 import sys
 from pathlib import Path
+import sqlite3
+
+# SQLite3 version fix for Streamlit Cloud
+if sqlite3.sqlite_version_info < (3, 35, 0):
+    __import__('pysqlite3')
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
 # Configurar caminhos
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -11,11 +17,6 @@ src_path = str(PROJECT_ROOT / "src")
 if src_path not in sys.path:
     sys.path.append(src_path)
 
-# SQLite3 version fix for Streamlit Cloud
-import sqlite3
-
-if sqlite3.sqlite_version_info < (3, 35, 0):
-    __import__('pysqlite3')
 
 import pathlib
 import streamlit as st
