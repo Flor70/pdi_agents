@@ -1,5 +1,5 @@
 from openai import OpenAI
-from src.core.utils import load_config, create_crew
+from ..core.utils import load_config, create_crew
 from pathlib import Path
 import asyncio
 import streamlit as st
