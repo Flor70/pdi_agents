@@ -3,10 +3,10 @@ import pathlib
 import os
 from pathlib import Path
 from crewai import Agent, Task, Crew, Process
-from tools.educational_content_tool import ReadEducationalDBTool
-from tools.serper_search_tool import SerperSearchTool
-from tools.exa_search_tool import ExaSearchTool
-from models.pdi_models import PDIConfig
+from src.tools.educational_content_tool import ReadEducationalDBTool
+from src.tools.serper_search_tool import SerperSearchTool
+from src.tools.exa_search_tool import ExaSearchTool
+from src.models.pdi_models import PDIConfig
 
 def load_config(agents_file, tasks_file):
     """Carrega as configurações dos arquivos YAML"""

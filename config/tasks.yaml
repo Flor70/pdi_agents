@@ -97,7 +97,7 @@ report_overview:
 planejamento_estruturado_de_desenvolvimento_individual:
   description: >
     Com base na análise do perfil do colaborador e nas recomendações de conteúdo fornecidas através da pesquisa de conteúdo,
-    criar um Plano de Desenvolvimento Individual (PDI) estruturado para 12 meses.
+    criar um Plano de Desenvolvimento Individual (PDI) estruturado e gamificado para 12 meses.
     Você deve ser capaz de integrar os links da pesquisa de conteúdo e o perfil do colaborador.
 
     Para criar o plano de desenvolvimento individual, vocé deve seguir os seguintes passos:
@@ -112,6 +112,7 @@ planejamento_estruturado_de_desenvolvimento_individual:
     • Distribua as atividades ao longo dos 12 meses de forma equilibrada
     • Considere a complexidade e interdependência entre os conteúdos
     • Estabeleça marcos de progresso claros e mensuráveis
+    • Procure fazer de maneira gamificada
 
     3. Defina Elementos de Acompanhamento:
     • Crie indicadores de progresso para cada trimestre
@@ -145,6 +146,7 @@ planejamento_estruturado_de_desenvolvimento_individual:
       - Resultados esperados
       - Recursos necessários
       - Indicadores de progresso
+      - Desafio de conclusão
 
     3. Marcos e Acompanhamento:
     • Metas trimestrais detalhadas
@@ -155,6 +157,7 @@ planejamento_estruturado_de_desenvolvimento_individual:
     • Recomendações práticas para gestão do tempo
     • Estratégias para maximizar o aprendizado
     • Dicas para superar possíveis obstáculos
+
 
   agent: pdi_specialist
 
@@ -243,6 +246,8 @@ technical_skills_research:
     Uma lista de 10 conteúdos técnicos, incluindo títulos, autores, tipo de conteúdo e links, com uma
     breve descrição sobre como esses recursos podem ajudar no desenvolvimento técnico
     do colaborador.
+    Sua resposta final deve ser SEMPRE em portugues do brasil.
+
 
 behavioral_skills_research:
   description: >
@@ -258,6 +263,8 @@ behavioral_skills_research:
   expected_output: > 
     Uma lista de 10 recursos focados em desenvolvimento comportamental, com links, descrições dos links, autores, tipo de conteúdo e
     um parágrafo sobre como os conteúdos se aplicam às necessidades do colaborador. 
+    Sua resposta final deve ser SEMPRE em portugues do brasil.
+
 
 industry_trends_and_inspiration_research:
   description: >
@@ -273,6 +280,7 @@ industry_trends_and_inspiration_research:
   expected_output: > 
     Uma lista de 10 recursos que conectem o colaborador às tendências da indústria e insights
     inspiradores, com explicações sobre sua relevância para o desenvolvimento do colaborador, links, descrições dos links, autores e tipo de conteúdo.
+    Sua resposta final deve ser SEMPRE em portugues do brasil.
 
 aggregate_and_structure_research:
   description: >

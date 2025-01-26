@@ -1,5 +1,5 @@
 from openai import OpenAI
-from core.utils import load_config, create_crew
+from src.core.utils import load_config, create_crew
 from pathlib import Path
 import asyncio
 import streamlit as st
@@ -70,7 +70,7 @@ class InterviewAssistant:
         # Mensagem inicial
         self.messages = [{
             "role": "assistant",
-            "content": '''Sou um consultor de inteligencia artificial criado pelo templo para criar e acompanhar planos personalizados e detalhados para voce. Fui programado com conteúdos e metodologias de desenvolvimento gamificado e baseado em desafios para maximizar sua aprendizagem e ganho de habilidades.
+            "content": '''Sou um consultor de inteligencia artificial criado pelo templo para criar e acompanhar planos personalizados e detalhados para você. Fui programado com conteúdos e metodologias de desenvolvimento gamificado e baseado em desafios para maximizar sua aprendizagem e ganho de habilidades.
 
 Faremos uma entrevista com duração de alguns minutos e na sequência vou preparar uma análise além de recomendações e um calendário de desenvolvimento.
 
