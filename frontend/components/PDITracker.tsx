@@ -16,7 +16,6 @@ interface AtividadeEducacional {
   dataInicio?: string;
   dataFim?: string;
   tags?: string[];
-  prerequisitos?: string[];
 }
 
 interface PDIConfig {

@@ -19,26 +19,11 @@ class AtividadeEducacional(BaseModel):
     trimestre: int
     tipo: TipoAtividade
     link: Optional[str] = None  
-    plataforma: str
+    plataforma: Optional[str] = None
     data_inicio: Optional[datetime] = None
     data_fim: Optional[datetime] = None
     tags: Optional[List[str]] = None
-    prerequisitos: Optional[List[str]] = None
 
-    # @field_validator('link')
-    # @classmethod
-    # def validate_url(cls, v):
-    #     url_pattern = re.compile(
-    #         r'^https?://'  
-    #         r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'  
-    #         r'localhost|'  
-    #         r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  
-    #         r'(?::\d+)?'  
-    #         r'(?:/?|[/?]\S+)$', re.IGNORECASE)
-        
-    #     if not url_pattern.match(v):
-    #         raise ValueError('URL inválida')
-    #     return v
 
     @field_validator('trimestre')
     @classmethod

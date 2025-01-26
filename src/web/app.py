@@ -66,15 +66,26 @@ if 'linkedin_messages' not in st.session_state:
     st.session_state.linkedin_messages = []
 
 # Mapeamento de nomes de arquivos para títulos em português
+FILE_ORDER = [
+    "final_summary.md",
+    "pdi.md",
+    "analise_perfil.md",
+    "aggregated_research.md",
+    "technical_skills.md",
+    "behavioral_skills.md",
+    "industry_trends.md",
+    "recomendacoes.md"
+]
+
 FILE_TITLES = {
-    "📋 PDI Completo": "pdi.md",
-    "👤 Análise de Perfil": "analise_perfil.md",
-    "📚 Recomendações": "recomendacoes.md",
-    "📊 Pesquisa Agregada": "aggregated_research.md",
-    "💡 Competências Técnicas": "technical_skills.md",
-    "🤝 Competências Comportamentais": "behavioral_skills.md",
-    "🌟 Tendências da Indústria": "industry_trends.md",
-    "📝 Resumo Final": "final_summary.md"
+    "final_summary.md": "📝 Resumo Final",
+    "pdi.md": "📋 PDI Completo",
+    "analise_perfil.md": "👤 Análise de Perfil",
+    "aggregated_research.md": "📊 Conteúdos Online Selecionados",
+    "technical_skills.md": "💡 Competências Técnicas",
+    "behavioral_skills.md": "🤝 Competências Comportamentais",
+    "industry_trends.md": "🌟 Tendências da Indústria",
+    "recomendacoes.md": "📚 Recomendações de Conteúdo Interno"
 }
 
 def show_sidebar(generated_files):
@@ -107,11 +118,11 @@ def show_sidebar(generated_files):
         
         # Lista de documentos
         st.subheader("📑 Documentos Gerados")
-        for file in generated_files:
-            if file.exists():
-                # Obtém o nome do arquivo e seu título correspondente
-                file_name = file.name
-                display_name = FILE_TITLES.get(file_name, file_name)
+        generated_files_dict = {f.name: f for f in generated_files}
+        for filename in FILE_ORDER:
+            if filename in generated_files_dict:
+                file = generated_files_dict[filename]
+                display_name = FILE_TITLES.get(filename, filename)
                 
                 if st.button(f"{display_name}"):
                     st.session_state.current_file = str(file)

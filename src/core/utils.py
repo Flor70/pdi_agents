@@ -156,7 +156,6 @@ def create_tasks(tasks_config, agents, interview_data=None):
         agent=agents['pdi_specialist'],
         context=[
             analise_subjetiva_colaborador,
-            recomendacao_conteudos,
             aggregate_and_structure_research
         ],
         output_file='output/pdi.md'

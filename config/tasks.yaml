@@ -96,8 +96,11 @@ report_overview:
 
 planejamento_estruturado_de_desenvolvimento_individual:
   description: >
-    Com base na análise do perfil do colaborador e nas recomendações de conteúdo fornecidas,
-    criar um Plano de Desenvolvimento Individual (PDI) estruturado para 12 meses que:
+    Com base na análise do perfil do colaborador e nas recomendações de conteúdo fornecidas através da pesquisa de conteúdo,
+    criar um Plano de Desenvolvimento Individual (PDI) estruturado para 12 meses.
+    Você deve ser capaz de integrar os links da pesquisa de conteúdo e o perfil do colaborador.
+
+    Para criar o plano de desenvolvimento individual, vocé deve seguir os seguintes passos:
 
     1. Integre Informações:
     • Utilize a análise do perfil profissional para entender o contexto e necessidades
@@ -349,12 +352,11 @@ gerar_visualizacao_pdi:
           "descricao": "string",
           "trimestre": "inteiro de 1 a 4",
           "tipo": "enum: curso, mentoria, projeto, workshop, leitura, outro",
-          "link": "URL do PDI", // opcional já que existem atividades que não possuem link
+          "link": "URL do PDI", // opcional para atividades que possuem link. Null para atividades sem link
           "plataforma": "string", opcional 
           "data_inicio": "datetime, opcional",
           "data_fim": "datetime, opcional",
           "tags": ["string", "string", ...], // opcional
-          "prerequisitos": ["id_atividade1", "id_atividade2", ...] // opcional
         }
       ]
     }
