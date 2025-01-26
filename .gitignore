@@ -6,7 +6,6 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -40,3 +39,7 @@ output/
 *.log
 .DS_Store
 db/
+
+# Ignorar dist exceto frontend/dist
+dist/
+!frontend/dist/
