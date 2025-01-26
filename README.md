@@ -233,17 +233,96 @@ Para adicionar novos componentes:
    - Usar Pydantic
    - Manter validações
 
-## Nota sobre SQLite e Streamlit Cloud
+## Notas de Implementação
 
-Para garantir a compatibilidade com o Streamlit Cloud, o projeto utiliza uma versão específica do SQLite. Isso é gerenciado através do seguinte código no início da aplicação:
+### Fix do SQLite3 para Streamlit Cloud
 
-```python
-import sqlite3
-import sys
+O Streamlit Cloud requer uma versão específica do SQLite3 (>= 3.35.0) para funcionar corretamente. Para garantir a compatibilidade, implementamos um fix que substitui o módulo SQLite3 padrão pelo pysqlite3. Aqui está o passo a passo para manter este fix funcionando:
 
-if sqlite3.sqlite_version_info < (3, 35, 0):
-    __import__('pysqlite3')
-    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-```
+1. **Dependência no requirements.txt**:
+   ```
+   pysqlite3-binary>=0.5.2
+   ```
+   - O pacote deve estar listado no arquivo `requirements.txt` na **raiz** do projeto
+   - O nome do pacote no pip é `pysqlite3-binary`, mas o módulo Python é `pysqlite3`
 
-Este código garante que a aplicação funcionará corretamente no ambiente do Streamlit Cloud.
+2. **Implementação do Fix**:
+   O fix deve ser implementado no início do arquivo principal (`app.py`), antes de qualquer outro código que possa usar SQLite:
+   ```python
+   import os
+   import sys
+   from pathlib import Path
+   import sqlite3
+
+   # SQLite3 version fix for Streamlit Cloud
+   try:
+       import pysqlite3
+       sys.modules['sqlite3'] = pysqlite3
+   except ImportError:
+       pass
+   ```
+
+3. **Pontos Importantes**:
+   - O fix deve ser executado antes de qualquer importação que possa usar SQLite3
+   - Use `import pysqlite3` (não `pysqlite3-binary`)
+   - Use atribuição direta ao `sys.modules` em vez de `pop()`
+   - Coloque em um bloco try/except para evitar erros caso o módulo não esteja disponível
+
+4. **Problemas Comuns**:
+   - Se o erro `ModuleNotFoundError: No module named 'pysqlite3'` aparecer, verifique se:
+     - O pacote está listado no `requirements.txt` na raiz do projeto
+     - O nome do pacote está correto (`pysqlite3-binary`)
+   - Se o erro `AttributeError: module 'pysqlite3-binary' has no attribute 'sqlite_version_info'` aparecer:
+     - Use `import pysqlite3` em vez de tentar importar `pysqlite3-binary`
+     - Remova a verificação de versão do SQLite3
+
+5. **Testando Localmente**:
+   - O fix é necessário apenas no Streamlit Cloud
+   - Localmente, o código continuará funcionando mesmo sem o pysqlite3 instalado
+   - Para testar o comportamento do Streamlit Cloud localmente, instale o `pysqlite3-binary`
+
+Este fix é necessário porque o Streamlit Cloud usa uma versão do Python que vem com uma versão mais antiga do SQLite3. Ao substituir o módulo SQLite3 padrão pelo pysqlite3, garantimos que temos acesso a recursos mais recentes do SQLite3 necessários para o funcionamento correto da aplicação.
+
+### Frontend no Streamlit Cloud
+
+Para que o frontend React funcione corretamente no Streamlit Cloud, são necessários alguns arquivos de configuração específicos:
+
+1. **packages.txt** na raiz do projeto:
+   ```
+   nodejs
+   npm
+   ```
+   Este arquivo lista os pacotes do sistema necessários para buildar o frontend.
+
+2. **build_frontend.sh** na raiz do projeto:
+   ```bash
+   #!/bin/bash
+   cd frontend
+   npm install
+   npm run build
+   ```
+   Este script será executado durante o deploy para buildar os componentes React.
+
+3. **Estrutura do Frontend**:
+   ```
+   frontend/
+   ├── components/         # Componentes React
+   ├── dist/              # Build gerado (não commitar)
+   ├── styles/            # Estilos CSS
+   ├── package.json       # Dependências npm
+   └── webpack.config.js  # Configuração do build
+   ```
+
+4. **Problemas Comuns**:
+   - Se o erro "Componente de visualização não encontrado" aparecer:
+     - Verifique se os arquivos `packages.txt` e `build_frontend.sh` estão na raiz
+     - Confirme que o script `build_frontend.sh` tem permissão de execução
+     - Verifique se o build está sendo gerado corretamente em `frontend/dist`
+   - Para testar localmente:
+     ```bash
+     cd frontend
+     npm install
+     npm run build
+     ```
+
+O Streamlit Cloud executará automaticamente o script de build durante o deploy, garantindo que os componentes React estejam disponíveis para a aplicação.
