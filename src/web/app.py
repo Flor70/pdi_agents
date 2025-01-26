@@ -5,8 +5,6 @@ import os
 import sys
 from pathlib import Path
 import sqlite3
-import pathlib
-
 
 # SQLite3 version fix for Streamlit Cloud
 try:
@@ -22,13 +20,14 @@ if src_path not in sys.path:
     sys.path.append(src_path)
 
 
+import pathlib
 import streamlit as st
 import streamlit.components.v1 as components
 import asyncio
-from assistants.pdi_assistant import PDIAssistant
-from assistants.interview_assistant import InterviewAssistant
-from assistants.linkedin_assistant import LinkedInAssistant
-from core.utils import create_crew, load_config
+from src.assistants.pdi_assistant import PDIAssistant
+from src.assistants.interview_assistant import InterviewAssistant
+from src.assistants.linkedin_assistant import LinkedInAssistant
+from src.core.utils import create_crew, load_config
 from langchain_openai import ChatOpenAI 
 
 # Configuração da página
@@ -99,7 +98,7 @@ def show_sidebar(generated_files):
         # Botão para voltar ao guia
         if st.button("📚 Guia do PDI"):
             st.session_state.current_page = 'main'
-            st.session_state.current_file = str(PROJECT_ROOT / 'docs' / 'pdi_guide.md')
+            st.session_state.current_file = str(PROJECT_ROOT / 'src' / 'assistants' / 'docs' / 'pdi_guide.md')
             st.rerun()
         
         # Botão para chat
@@ -136,7 +135,7 @@ def show_file_content():
     """Mostra o conteúdo do arquivo atual"""
     try:
         if 'current_file' not in st.session_state or st.session_state.current_file is None:
-            st.session_state.current_file = str(PROJECT_ROOT / 'docs' / 'pdi_guide.md')
+            st.session_state.current_file = str(PROJECT_ROOT / 'src' / 'assistants' / 'docs' / 'pdi_guide.md')
             
         file_path = st.session_state.current_file
         if not os.path.exists(file_path):
@@ -148,7 +147,7 @@ def show_file_content():
             st.markdown(content)
     except Exception as e:
         st.error(f"Erro ao ler o arquivo: {str(e)}")
-        st.session_state.current_file = str(PROJECT_ROOT / 'docs' / 'pdi_guide.md')
+        st.session_state.current_file = str(PROJECT_ROOT / 'src' / 'assistants' / 'docs' / 'pdi_guide.md')
         st.rerun()
 
 def verify_api_key(api_key):
@@ -393,7 +392,7 @@ def show_main_page():
         else:
             # Se é a primeira vez após completar a entrevista, mostrar o guia
             if 'current_file' not in st.session_state:
-                st.session_state.current_file = str(PROJECT_ROOT / 'docs' / 'pdi_guide.md')
+                st.session_state.current_file = str(PROJECT_ROOT / 'src' / 'assistants' / 'docs' / 'pdi_guide.md')
             
             # Mostrar o conteúdo do arquivo atual
             show_file_content()
