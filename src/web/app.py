@@ -7,30 +7,24 @@ from pathlib import Path
 
 # Configurar caminhos
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(PROJECT_ROOT))
+src_path = str(PROJECT_ROOT / "src")
+if src_path not in sys.path:
+    sys.path.append(src_path)
 
 # SQLite3 version fix for Streamlit Cloud
 import sqlite3
 
 if sqlite3.sqlite_version_info < (3, 35, 0):
-    try:
-        __import__('pysqlite3-binary')
-        sys.modules['sqlite3'] = sys.modules.pop('pysqlite3-binary')
-    except ImportError:
-        try:
-            __import__('pysqlite3')
-            sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-        except ImportError:
-            print("Warning: pysqlite3 not found. This may cause issues with SQLite functionality.")
+    __import__('pysqlite3')
 
 import pathlib
 import streamlit as st
 import streamlit.components.v1 as components
 import asyncio
-from assistants.pdi_assistant import PDIAssistant
-from assistants.interview_assistant import InterviewAssistant
-from assistants.linkedin_assistant import LinkedInAssistant
-from core.utils import create_crew, load_config
+from src.assistants.pdi_assistant import PDIAssistant
+from src.assistants.interview_assistant import InterviewAssistant
+from src.assistants.linkedin_assistant import LinkedInAssistant
+from src.core.utils import create_crew, load_config
 from langchain_openai import ChatOpenAI 
 
 # Configuração da página
