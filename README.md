@@ -285,44 +285,30 @@ Este fix é necessário porque o Streamlit Cloud usa uma versão do Python que v
 
 ### Frontend no Streamlit Cloud
 
-Para que o frontend React funcione corretamente no Streamlit Cloud, são necessários alguns arquivos de configuração específicos:
+Para que o frontend React funcione corretamente no Streamlit Cloud, o diretório `frontend/dist` contendo o build do componente React é incluído diretamente no repositório. Isso elimina a necessidade de instalar Node.js e npm no Streamlit Cloud.
 
-1. **packages.txt** na raiz do projeto:
-   ```
-   nodejs
-   npm
-   ```
-   Este arquivo lista os pacotes do sistema necessários para buildar o frontend.
+#### Estrutura do Frontend
+```
+frontend/
+├── components/         # Componentes React
+├── dist/              # Build gerado (commitar este diretório)
+├── styles/            # Estilos CSS
+├── package.json       # Dependências npm
+└── webpack.config.js  # Configuração do build
+```
 
-2. **build_frontend.sh** na raiz do projeto:
-   ```bash
-   #!/bin/bash
-   cd frontend
-   npm install
-   npm run build
-   ```
-   Este script será executado durante o deploy para buildar os componentes React.
+#### Desenvolvimento Local
+Para desenvolver e testar localmente:
+```bash
+cd frontend
+npm install
+npm run build
+```
 
-3. **Estrutura do Frontend**:
-   ```
-   frontend/
-   ├── components/         # Componentes React
-   ├── dist/              # Build gerado (não commitar)
-   ├── styles/            # Estilos CSS
-   ├── package.json       # Dependências npm
-   └── webpack.config.js  # Configuração do build
-   ```
+O build gerado em `frontend/dist` deve ser commitado para o repositório para garantir que o Streamlit Cloud possa encontrar os componentes React.
 
-4. **Problemas Comuns**:
-   - Se o erro "Componente de visualização não encontrado" aparecer:
-     - Verifique se os arquivos `packages.txt` e `build_frontend.sh` estão na raiz
-     - Confirme que o script `build_frontend.sh` tem permissão de execução
-     - Verifique se o build está sendo gerado corretamente em `frontend/dist`
-   - Para testar localmente:
-     ```bash
-     cd frontend
-     npm install
-     npm run build
-     ```
-
-O Streamlit Cloud executará automaticamente o script de build durante o deploy, garantindo que os componentes React estejam disponíveis para a aplicação.
+#### Problemas Comuns
+- Se o erro "Componente de visualização não encontrado" aparecer:
+  - Verifique se o diretório `frontend/dist` existe e está commitado no repositório
+  - Confirme que o arquivo `frontend/dist/pdi-tracker.js` está presente
+  - Execute `npm run build` localmente e commite as alterações se necessário
