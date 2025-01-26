@@ -1,0 +1,6 @@
+[browser]
+gatherUsageStats = false
+
+[runner]
+# Comando para executar antes de iniciar o Streamlit
+postScript = "bash build_frontend.sh"
