@@ -24,6 +24,7 @@ import streamlit.components.v1 as components
 import asyncio
 from src.assistants.pdi_assistant import PDIAssistant
 from src.assistants.interview_assistant import InterviewAssistant
+from src.assistants.linkedin_assistant import LinkedInAssistant
 from src.core.utils import create_crew, load_config
 from langchain_openai import ChatOpenAI 
 
@@ -57,8 +58,12 @@ if 'pdi_assistant' not in st.session_state:
     st.session_state.pdi_assistant = None
 if 'interview_assistant' not in st.session_state:
     st.session_state.interview_assistant = None
+if 'linkedin_assistant' not in st.session_state:
+    st.session_state.linkedin_assistant = None
 if 'chat_messages' not in st.session_state:
     st.session_state.chat_messages = []
+if 'linkedin_messages' not in st.session_state:
+    st.session_state.linkedin_messages = []
 
 # Mapeamento de nomes de arquivos para títulos em português
 FILE_TITLES = {
@@ -87,10 +92,15 @@ def show_sidebar(generated_files):
         if st.button("💬 Consultor PDI Bot"):
             st.session_state.current_page = 'chat'
             st.rerun()
-        
+            
         # Botão para visualização do PDI
         if st.button("📊 Visualização do PDI"):
             st.session_state.current_page = 'pdi_tracker'
+            st.rerun()
+
+        # Botão para LinkedIn Post Creator
+        if st.button("📱 LinkedIn Post"):
+            st.session_state.current_page = 'linkedin'
             st.rerun()
         
         st.divider()
@@ -221,6 +231,42 @@ def show_chat_interface():
         messages_key="chat_messages"
     )
 
+def show_linkedin_interface():
+    """Interface do chat para criação de posts do LinkedIn"""
+    if st.session_state.linkedin_assistant is None:
+        st.session_state.linkedin_assistant = LinkedInAssistant(st.session_state.openai_api_key)
+        st.session_state.linkedin_assistant.initialize_assistant()
+        try:
+            # Gera o post inicial automaticamente
+            initial_post = st.session_state.linkedin_assistant.upload_pdi_documents(OUTPUT_DIR)
+            if initial_post:
+                st.session_state.linkedin_messages = [
+                    {"role": "assistant", "content": initial_post}
+                ]
+        except ValueError as e:
+            st.error(str(e))
+            return
+    
+    st.title("📱 LinkedIn Post Creator")
+    st.markdown("Este assistente criou um post do LinkedIn celebrando o início do seu PDI. Você pode pedir ajustes conforme necessário.")
+    
+    # Display chat messages
+    for message in st.session_state.linkedin_messages:
+        with st.chat_message(message["role"]):
+            st.write(message["content"])
+    
+    # Chat input
+    if prompt := st.chat_input("Digite sua mensagem para ajustar o post"):
+        st.session_state.linkedin_messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.write(prompt)
+        
+        with st.chat_message("assistant"):
+            with st.spinner("Pensando..."):
+                response = asyncio.run(st.session_state.linkedin_assistant.get_response(prompt))
+            st.session_state.linkedin_messages.append({"role": "assistant", "content": response})
+            st.write(response)
+
 def show_pdi_tracker():
     """Mostra a interface de visualização do PDI"""
     st.title("📊 Visualização do PDI")
@@ -308,7 +354,7 @@ def show_main_page():
     
     if st.session_state.interview_complete:
         output_dir = Path(OUTPUT_DIR)
-        generated_files = [output_dir / filename for filename in FILE_TITLES.keys()]
+        generated_files = list(output_dir.glob("*.md"))  # Lista todos os arquivos .md no diretório
         
         # Mostrar a sidebar
         show_sidebar(generated_files)
@@ -328,6 +374,8 @@ def show_main_page():
             show_chat_interface()
         elif st.session_state.current_page == 'pdi_tracker':
             show_pdi_tracker()
+        elif st.session_state.current_page == 'linkedin':
+            show_linkedin_interface()
         else:
             # Se é a primeira vez após completar a entrevista, mostrar o guia
             if 'current_file' not in st.session_state:
@@ -343,7 +391,7 @@ def show_main_page():
         show_interview_interface()
 
 def main():
-    show_main_page()
+        show_main_page()
 
 if __name__ == "__main__":
     main()

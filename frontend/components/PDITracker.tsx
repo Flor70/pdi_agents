@@ -11,8 +11,8 @@ interface AtividadeEducacional {
   descricao: string;
   trimestre: number;
   tipo: 'curso' | 'mentoria' | 'projeto' | 'workshop' | 'leitura' | 'outro';
-  link: string;
-  plataforma: string;
+  link?: string;
+  plataforma?: string;
   dataInicio?: string;
   dataFim?: string;
   tags?: string[];
@@ -104,15 +104,17 @@ const PDITracker: React.FC<PDITrackerProps> = ({
                     <p>{atividade.descricao}</p>
                     <div className="atividade-meta">
                       <span className="tipo">{atividade.tipo}</span>
-                      <a
-                        href={atividade.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="link-btn"
-                      >
-                        <ExternalLink className="icon" />
-                        {atividade.plataforma}
-                      </a>
+                      {atividade.link && atividade.plataforma && atividade.link.length > 0 && atividade.plataforma.length > 0 && (
+                        <a
+                          href={atividade.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="link-btn"
+                        >
+                          <ExternalLink className="icon" />
+                          {atividade.plataforma}
+                        </a>
+                      )}
                     </div>
                   </div>
                 ))}

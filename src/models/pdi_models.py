@@ -18,7 +18,7 @@ class AtividadeEducacional(BaseModel):
     descricao: str
     trimestre: int
     tipo: TipoAtividade
-    link: str  
+    link: Optional[str] = None  
     plataforma: str
     data_inicio: Optional[datetime] = None
     data_fim: Optional[datetime] = None

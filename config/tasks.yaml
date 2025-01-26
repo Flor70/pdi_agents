@@ -315,26 +315,25 @@ research_quality_evaluation:
 
 gerar_visualizacao_pdi:
   description: >
-    Com base no PDI estruturado anteriormente gerado, criar uma estrutura JSON 
-    que represente todas as atividades e seus relacionamentos para visualização.
+    Com base no PDI estruturado anteriormente gerado e que foi enviado a você, criar uma estrutura JSON 
+    que represente TODAS as atividades e seus relacionamentos para visualização.
 
     IMPORTANTE:
     1. Extrair do documento PDI:
        - Todas as atividades educacionais
        - Links e recursos associados
        - Organização trimestral
-       - Pré-requisitos entre atividades
 
     2. Garantir que:
        - Todos os links sejam mantidos exatamente como estão no PDI
        - A organização trimestral seja preservada
-       - Os pré-requisitos sejam corretamente mapeados
        - As datas de início/fim sejam convertidas para o formato correto
 
     3. Validar:
        - Todos os IDs sejam únicos
-       - Todos os links estejam presentes
+       - Todos os links estejam presentes para atividades que tenham um link
        - Todas as atividades tenham um trimestre definido
+
 
   expected_output: >
     Um arquivo JSON em output/pdi.json seguindo o modelo PDIConfig:
@@ -342,7 +341,7 @@ gerar_visualizacao_pdi:
       "titulo": "Plano de Desenvolvimento Individual",
       "subtitulo": "string, opcional",
       "colaborador": "string",
-      "periodo": "2024",
+      "periodo": "2025",
       "atividades": [
         {
           "id": "string único",
@@ -350,8 +349,8 @@ gerar_visualizacao_pdi:
           "descricao": "string",
           "trimestre": "inteiro de 1 a 4",
           "tipo": "enum: curso, mentoria, projeto, workshop, leitura, outro",
-          "link": "URL do PDI",
-          "plataforma": "string",
+          "link": "URL do PDI", // opcional já que existem atividades que não possuem link
+          "plataforma": "string", opcional 
           "data_inicio": "datetime, opcional",
           "data_fim": "datetime, opcional",
           "tags": ["string", "string", ...], // opcional

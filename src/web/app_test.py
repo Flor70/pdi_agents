@@ -2,6 +2,8 @@ import streamlit as st
 import streamlit.components.v1 as components
 from pathlib import Path
 import json
+import asyncio
+from src.assistants.linkedin_assistant import LinkedInAssistant
 
 # Set up page config
 st.set_page_config(
@@ -34,6 +36,11 @@ def show_sidebar():
     # Botão para visualização do PDI
     if st.sidebar.button("📊 Visualização do PDI"):
         st.session_state.current_page = 'pdi_tracker'
+        st.rerun()
+        
+    # Botão para LinkedIn Post Creator
+    if st.sidebar.button("📱 LinkedIn Post"):
+        st.session_state.current_page = 'linkedin'
         st.rerun()
     
     st.sidebar.divider()
@@ -122,12 +129,47 @@ def show_pdi_tracker():
     except Exception as e:
         st.error(f"Erro ao carregar a visualização do PDI: {str(e)}")
 
+def show_linkedin_interface():
+    """Interface do chat para criação de posts do LinkedIn"""
+    if st.session_state.linkedin_assistant is None:
+        st.session_state.linkedin_assistant = LinkedInAssistant("test-key")  # Usando uma chave de teste
+        st.session_state.linkedin_assistant.initialize_assistant()
+        try:
+            st.session_state.linkedin_assistant.upload_pdi_documents(OUTPUT_DIR)
+        except ValueError as e:
+            st.error(str(e))
+            return
+    
+    st.title("📱 LinkedIn Post Creator")
+    st.markdown("Este assistente irá criar um post do LinkedIn celebrando o início do seu PDI. O post será criado automaticamente e você pode pedir ajustes conforme necessário.")
+    
+    # Display chat messages
+    for message in st.session_state.linkedin_messages:
+        with st.chat_message(message["role"]):
+            st.write(message["content"])
+    
+    # Chat input
+    if prompt := st.chat_input("Digite sua mensagem"):
+        st.session_state.linkedin_messages.append({"role": "user", "content": prompt})
+        with st.chat_message("user"):
+            st.write(prompt)
+        
+        with st.chat_message("assistant"):
+            with st.spinner("Pensando..."):
+                response = asyncio.run(st.session_state.linkedin_assistant.get_response(prompt))
+            st.session_state.linkedin_messages.append({"role": "assistant", "content": response})
+            st.write(response)
+
 def main():
     # Initialize session state
     if 'current_page' not in st.session_state:
         st.session_state.current_page = 'document'
     if 'current_file' not in st.session_state:
         st.session_state.current_file = str(OUTPUT_DIR / 'pdi.md')
+    if 'linkedin_assistant' not in st.session_state:
+        st.session_state.linkedin_assistant = None
+    if 'linkedin_messages' not in st.session_state:
+        st.session_state.linkedin_messages = []
     
     # Show sidebar
     show_sidebar()
@@ -135,6 +177,8 @@ def main():
     # Show appropriate page
     if st.session_state.current_page == 'pdi_tracker':
         show_pdi_tracker()
+    elif st.session_state.current_page == 'linkedin':
+        show_linkedin_interface()
     else:
         show_file_content()
 

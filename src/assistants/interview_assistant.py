@@ -70,7 +70,11 @@ class InterviewAssistant:
         # Mensagem inicial
         self.messages = [{
             "role": "assistant",
-            "content": "Olá! Sou seu consultor de desenvolvimento profissional. Vou fazer algumas perguntas para entender melhor seu perfil e objetivos. Primeiro, poderia me contar qual o seu nome e empresa que você trabalha?"
+            "content": '''Sou um consultor de inteligencia artificial criado pelo templo para criar e acompanhar planos personalizados e detalhados para voce. Fui programado com conteúdos e metodologias de desenvolvimento gamificado e baseado em desafios para maximizar sua aprendizagem e ganho de habilidades.
+
+Faremos uma entrevista com duração de alguns minutos e na sequência vou preparar uma análise além de recomendações e um calendário de desenvolvimento.
+
+Primeiro, poderia me contar qual o seu nome e empresa que você trabalha?'''
         }]
         
     async def get_response(self, user_message):
