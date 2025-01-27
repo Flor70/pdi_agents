@@ -27,6 +27,7 @@ import asyncio
 from src.assistants.pdi_assistant import PDIAssistant
 from src.assistants.interview_assistant import InterviewAssistant
 from src.assistants.linkedin_assistant import LinkedInAssistant
+from src.assistants.mestre_dos_magos_assistant import MestreDosMagosAssistant
 from src.core.utils import create_crew, load_config
 from langchain_openai import ChatOpenAI 
 
@@ -66,6 +67,10 @@ if 'chat_messages' not in st.session_state:
     st.session_state.chat_messages = []
 if 'linkedin_messages' not in st.session_state:
     st.session_state.linkedin_messages = []
+if 'mestre_dos_magos_assistant' not in st.session_state:
+    st.session_state.mestre_dos_magos_assistant = None
+if 'mestre_dos_magos_messages' not in st.session_state:
+    st.session_state.mestre_dos_magos_messages = []
 
 # Mapeamento de nomes de arquivos para títulos em português
 FILE_ORDER = [
@@ -105,16 +110,23 @@ def show_sidebar(generated_files):
         if st.button("💬 Consultor PDI Bot"):
             st.session_state.current_page = 'chat'
             st.rerun()
+
+        # Botão para Mestre dos Magos
+        if st.button("🧙‍♂️ Mestre dos Magos"):
+            st.session_state.current_page = 'mestre_dos_magos'
+            st.rerun()   
             
         # Botão para visualização do PDI
         if st.button("📊 Visualização do PDI"):
             st.session_state.current_page = 'pdi_tracker'
-            st.rerun()
+            st.rerun() 
 
         # Botão para LinkedIn Post Creator
         if st.button("📱 LinkedIn Post"):
             st.session_state.current_page = 'linkedin'
             st.rerun()
+            
+
         
         st.divider()
         
@@ -389,6 +401,8 @@ def show_main_page():
             show_pdi_tracker()
         elif st.session_state.current_page == 'linkedin':
             show_linkedin_interface()
+        elif st.session_state.current_page == 'mestre_dos_magos':
+            show_mestre_dos_magos_interface()
         else:
             # Se é a primeira vez após completar a entrevista, mostrar o guia
             if 'current_file' not in st.session_state:
@@ -402,6 +416,21 @@ def show_main_page():
         
         # Show interview interface
         show_interview_interface()
+
+def show_mestre_dos_magos_interface():
+    """Interface do chat para o Mestre dos Magos"""
+    if st.session_state.mestre_dos_magos_assistant is None:
+        st.session_state.mestre_dos_magos_assistant = MestreDosMagosAssistant(st.session_state.openai_api_key)
+        st.session_state.mestre_dos_magos_assistant.initialize_assistant()
+        st.session_state.mestre_dos_magos_assistant.create_thread()
+        st.session_state.mestre_dos_magos_messages = []
+    
+    show_generic_chat_interface(
+        title="🧙‍♂️ Mestre dos Magos",
+        description="Este assistente é um mestre dos magos e pode te ajudar a cumprir sua jornada de PDI com sabedoria.",
+        assistant=st.session_state.mestre_dos_magos_assistant,
+        messages_key="mestre_dos_magos_messages"
+    )
 
 def main():
         show_main_page()
